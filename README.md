@@ -43,8 +43,8 @@ Start off by forking this repository. In your README, write a design doc to outl
 #### Timeline:
 - Create a week-by-week set of milestones for each person in your group. Make sure you explicitly outline what each group member's duties will be.
 - 11/22: Di- OBJs, L-Systems Tree Generation, Terrain Generation; Serena- Player Physics, Player State,
-- 11/29: Di and Serena- phase-in effect and incorporating player state with generation properties
-- 12/06: Di- add textures, polish OBJs, normals; Serena- flower assets, House generation
+- 11/29: Di and Serena- phase-in effect and incorporating player state with generation properties (by the end of this week, hopefully  have black sky and white terrain with structures, which will both exhibit desired behavior such as phasing in/out in a pixelated manner and becoming less natural). 
+- 12/06: Di- add textures, polish OBJs, normals; Serena- flower assets, House generation (stretch)
 
 Submit your Design doc as usual via pull request against this repository.
 ## Milestone 2: Implementation part 1 (due 11/22)
