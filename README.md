@@ -38,6 +38,8 @@ Start off by forking this repository. In your README, write a design doc to outl
 #### Design:
 - How will your program fit together? Make a simple free-body diagram illustrating the pieces.
 
+![](finalProj.png)
+
 #### Timeline:
 - Create a week-by-week set of milestones for each person in your group. Make sure you explicitly outline what each group member's duties will be.
 - 11/22: Di- ; Serena- 
