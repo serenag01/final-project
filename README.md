@@ -27,14 +27,13 @@ Start off by forking this repository. In your README, write a design doc to outl
 
 #### Specification:
 - Outline the main features of your project.
-- In this project, Di and I intend to create a walking simulator in which the player can move around an intially fully-populated forest in the style of Coraline. The further from their spawn point they travel, the more sparse, cubist, and pixelated the scene becomes, just like in the scene from the movie. While diverging from the spawn point, trees will begin to look less natural, just as they do in the film. The forest and trees are all generated using instanced rendering and the terrain is generated as the player walks. Additionally, this project will incorporate procedural elements by altering the color palette or "season" and using randomness to generate and place the trees and assets in the forest.
+- In this project, Di and I intend to create a walking simulator in which the player can move around an intially fully-populated forest in the style of Coraline. The further from their spawn point they travel, the more sparse, cubist, and pixelated the scene becomes, just like in the scene from the movie. While diverging from the spawn point, trees will begin to look less natural, just as they do in the film. The forest and trees are all generated using instanced rendering and the terrain is generated as the player walks. Additionally, this project will incorporate procedural elements by altering the color palette or "season" and using randomness to generate and place the trees and assets in the forest. This project will require use of keyboard and mouse controls. As a bonus, we may also feature royalty-free music.
 
 #### Techniques:
 - What are the main technical/algorithmic tools you’ll be using? Give an overview, citing specific papers/articles.
-- L-Systems
-- Noise Functions
-- Procedurally-generated realtime terrain creation
-- 
+- L-Systems (http://paulbourke.net/fractals/lsys/)
+- Noise Functions (https://graphics.pixar.com/library/WaveletNoise/paper.pdf)
+- Procedurally-generated realtime terrain creation (https://remptongames.com/2021/02/28/how-minecraft-generates-massive-virtual-worlds-from-scratch/)
 
 #### Design:
 - How will your program fit together? Make a simple free-body diagram illustrating the pieces.
