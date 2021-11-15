@@ -40,6 +40,9 @@ Start off by forking this repository. In your README, write a design doc to outl
 
 #### Timeline:
 - Create a week-by-week set of milestones for each person in your group. Make sure you explicitly outline what each group member's duties will be.
+- 11/22: Di- ; Serena- 
+- 11/29: Di- ; Serena- 
+- 12/06: Di- ; Serena-
 
 Submit your Design doc as usual via pull request against this repository.
 ## Milestone 2: Implementation part 1 (due 11/22)
