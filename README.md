@@ -10,13 +10,20 @@ Start off by forking this repository. In your README, write a design doc to outl
 
 #### Introduction
 - What motivates your project?
+- Di Lu and Serena Gandhi both share a deep love for Coraline (2009). We knew we wanted to incorporate the visual elements from the film, and while watching a "in the making" video of Coraline, stumbled upon the scene in which Coraline runs away (https://www.youtube.com/watch?v=91nfNp7MVIw) and noticed that it has great procedural graphics potential.
 
 #### Goal
 - What do you intend to achieve with this project?
+- In this project, Di and I intend to create a walking simulator in which the player can move around an intially fully-populated forest in the style of Coraline. The further from their spawn point they travel, the more sparse, cubist, and pixelated the scene becomes, just like in the scene from the movie. While diverging from the spawn point, trees will begin to look less natural, just as they do in the film. The forest and trees are all generated using instanced rendering and the terrain is generated as the player walks. Additionally, this project will incorporate procedural elements by altering the color palette or "season" and using randomness to generate and place the trees and assets in the forest.
 
 #### Inspiration/reference:
 - You must have some form of reference material for your final project. Your reference may be a research paper, a blog post, some artwork, a video, another class at Penn, etc.  
 - Include in your design doc links to and images of your reference material.
+- https://www.youtube.com/watch?v=91nfNp7MVIw
+- ![image](https://user-images.githubusercontent.com/60444726/141865552-a3a7e93b-9b17-426b-bd80-28f5e8d90aae.png)
+- ![image](https://user-images.githubusercontent.com/60444726/141865591-80497847-05b5-4a3a-a51a-de41f66862d6.png)
+- ![image](https://user-images.githubusercontent.com/60444726/141865624-49270621-bb91-4aa1-bacb-24e14c17f3a1.png)
+
 
 #### Specification:
 - Outline the main features of your project.
