@@ -42,9 +42,9 @@ Start off by forking this repository. In your README, write a design doc to outl
 
 #### Timeline:
 - Create a week-by-week set of milestones for each person in your group. Make sure you explicitly outline what each group member's duties will be.
-- 11/22: Di- ; Serena- 
-- 11/29: Di- ; Serena- 
-- 12/06: Di- ; Serena-
+- 11/22: Di- OBJs, L-Systems Tree Generation, Terrain Generation; Serena- Player Physics, Player State,
+- 11/29: Di and Serena- phase-in effect and incorporating player state with generation properties
+- 12/06: Di- add textures, polish OBJs, normals; Serena- flower assets, House generation
 
 Submit your Design doc as usual via pull request against this repository.
 ## Milestone 2: Implementation part 1 (due 11/22)
@@ -69,7 +69,7 @@ We'll check your repository for updates. No need to create a new pull request.
 Come to class on the due date with a WORKING COPY of your project. We'll be spending time in class critiquing and reviewing your work so far.
 
 ## Final submission (due 12/6)
-Time to polish! Spen this last week of your project using your generator to produce beautiful output. Add textures, tune parameters, play with colors, play with camera animation. Take the feedback from class critques and use it to take your project to the next level.
+Time to polish! Spend this last week of your project using your generator to produce beautiful output. Add textures, tune parameters, play with colors, play with camera animation. Take the feedback from class critques and use it to take your project to the next level.
 
 Submission:
 - Push all your code / files to your repository
