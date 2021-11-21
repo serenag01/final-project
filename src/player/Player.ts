@@ -14,11 +14,14 @@ class Player {
   inputs: Inputs;
   turnAngle: number = 0.0;
   groundedFoward: vec3;
+  distanceFromStart : vec3 = vec3.fromValues(0.0, 0.0, 0.0);
+  startPosition : vec3;
 
   constructor(cam: Camera, pos: vec3, fw: vec3) {
     this.camera = cam;
 
     this.position = vec3.clone(pos);
+    this.startPosition = vec3.clone(pos);
     this.forward = vec3.clone(fw);
 
     this.groundedFoward = vec3.clone(fw);
@@ -129,6 +132,7 @@ class Player {
 
   update(dT: number) {
     this.move(dT);
+    this.distanceFromStart = vec3.scaleAndAdd(this.distanceFromStart, this.position, this.startPosition, -1);
     this.camera.update();
   }
 }
