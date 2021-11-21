@@ -10,6 +10,7 @@ import ShaderProgram, { Shader } from "./rendering/gl/ShaderProgram";
 import Mesh from "./geometry/Mesh";
 import LSystem from "./l-system/L-System";
 import { readTextFile } from "../src/globals";
+import Player from "./player/Player";
 import Terrain from "./terrain/terrain";
 
 var palette = {
@@ -54,10 +55,10 @@ let base: Mesh = new Mesh(
 function putBase() {
   base.create();
 
-  let base1 = [15, 0, 0, 0];
+  let base1 = [5, 0, 0, 0];
   let base2 = [0, 10, 0, 0];
-  let base3 = [0, 0, 15, 0];
-  let base4 = [50, 42, 0, 1];
+  let base3 = [0, 0, 5, 0];
+  let base4 = [0, 0, 0, 1];
 
   let cols = [0.761, 0.698, 0.502, 1.0];
 
@@ -68,7 +69,6 @@ function putBase() {
   let bcolors: Float32Array = new Float32Array(cols);
   base.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
   base.setNumInstances(1);
-
 }
 
 // Define an object with application parameters and button callbacks
@@ -90,7 +90,7 @@ function loadScene() {
     prevColor2
   );
   coral.makeTree();
-
+  
   putBase();
 
   // KEEP THIS FOR NOW: creates a terrain shape imported from a Maya OBJ
@@ -142,6 +142,8 @@ function main() {
     vec3.fromValues(0, 0, 0),
     vec3.fromValues(10, 0, 10)
   );
+
+  let player: Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -217,7 +219,8 @@ function main() {
       );
       coral.makeTree();
     }
-    camera.update();
+    // camera.update();
+    player.update(0.01);
     stats.begin();
     //instancedShader.setTime(time);
     //flat.setTime(time++);
@@ -236,6 +239,28 @@ function main() {
     requestAnimationFrame(tick);
   }
 
+  // lock the mouse at the center of screen ------------------------------------------------
+  // from: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API
+  canvas.onclick = function () {
+    canvas.requestPointerLock();
+  };
+
+  function handleMouseMovement(event: MouseEvent) {
+    player.handleMouseMovement(event);
+  }
+
+  function mouseLockChangeAlert() {
+    if (document.pointerLockElement === canvas) {
+      document.addEventListener("mousemove", handleMouseMovement, false);
+    } else {
+      document.removeEventListener("mousemove", handleMouseMovement, false);
+    }
+  }
+
+  // EVENT LISTENERS------------------------------------------------------------
+
+  document.addEventListener("pointerlockchange", mouseLockChangeAlert, false);
+
   window.addEventListener(
     "resize",
     function () {
@@ -243,6 +268,22 @@ function main() {
       camera.setAspectRatio(window.innerWidth / window.innerHeight);
       camera.updateProjectionMatrix();
       //flat.setDimensions(window.innerWidth, window.innerHeight);
+    },
+    false
+  );
+
+  window.addEventListener(
+    "keydown",
+    function (event) {
+      player.handleKeyPressEvent(event);
+    },
+    false
+  );
+
+  window.addEventListener(
+    "keyup",
+    function (event) {
+      player.handleKeyReleaseEvent(event);
     },
     false
   );
