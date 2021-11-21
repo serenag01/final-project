@@ -10,6 +10,7 @@ import ShaderProgram, { Shader } from "./rendering/gl/ShaderProgram";
 import Mesh from "./geometry/Mesh";
 import LSystem from "./l-system/L-System";
 import { readTextFile } from "../src/globals";
+import Player from "./player/Player";
 
 var palette = {
   color1: [255, 127.0, 80.0, 1.0], // branch
@@ -47,10 +48,10 @@ let base: Mesh = new Mesh(
 function putBase() {
   base.create();
 
-  let base1 = [15, 0, 0, 0];
+  let base1 = [5, 0, 0, 0];
   let base2 = [0, 10, 0, 0];
-  let base3 = [0, 0, 15, 0];
-  let base4 = [50, 42, 0, 1];
+  let base3 = [0, 0, 5, 0];
+  let base4 = [0, 0, 0, 1];
 
   let cols = [0.761, 0.698, 0.502, 1.0];
 
@@ -125,9 +126,11 @@ function main() {
   loadScene();
 
   const camera = new Camera(
-    vec3.fromValues(-60, 90, 15),
-    vec3.fromValues(50, 100, 0)
+    vec3.fromValues(0, 30, 10),
+    vec3.fromValues(50, 50, 0)
   );
+
+  let player : Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -196,7 +199,8 @@ function main() {
       );
       coral.makeTree();
     }
-    camera.update();
+   // camera.update();
+    player.update(.01);
     stats.begin();
     instancedShader.setTime(time);
     flat.setTime(time++);
@@ -220,6 +224,14 @@ function main() {
     },
     false
   );
+
+  window.addEventListener('keydown', function (event) {
+    player.handleKeyPressEvent(event);
+}, false);
+
+window.addEventListener('keyup', function (event) {
+    player.handleKeyReleaseEvent(event);
+}, false);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
