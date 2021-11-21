@@ -62,7 +62,6 @@ function putBase() {
   let bcolors: Float32Array = new Float32Array(cols);
   base.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
   base.setNumInstances(1);
-
 }
 
 // Define an object with application parameters and button callbacks
@@ -130,7 +129,7 @@ function main() {
     vec3.fromValues(50, 50, 0)
   );
 
-  let player : Player = new Player(camera, camera.position, camera.forward);
+  let player: Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -199,8 +198,8 @@ function main() {
       );
       coral.makeTree();
     }
-   // camera.update();
-    player.update(.01);
+    // camera.update();
+    player.update(0.01);
     stats.begin();
     instancedShader.setTime(time);
     flat.setTime(time++);
@@ -214,6 +213,16 @@ function main() {
     requestAnimationFrame(tick);
   }
 
+  // EVENT LISTENERS------------------------------------------------------------
+
+  window.addEventListener(
+    "mousemove",
+    function (event) {
+      player.handleMouseMovement(event);
+    }, 
+    false
+  );
+
   window.addEventListener(
     "resize",
     function () {
@@ -225,13 +234,21 @@ function main() {
     false
   );
 
-  window.addEventListener('keydown', function (event) {
-    player.handleKeyPressEvent(event);
-}, false);
+  window.addEventListener(
+    "keydown",
+    function (event) {
+      player.handleKeyPressEvent(event);
+    },
+    false
+  );
 
-window.addEventListener('keyup', function (event) {
-    player.handleKeyReleaseEvent(event);
-}, false);
+  window.addEventListener(
+    "keyup",
+    function (event) {
+      player.handleKeyReleaseEvent(event);
+    },
+    false
+  );
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
