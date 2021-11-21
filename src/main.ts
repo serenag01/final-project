@@ -85,7 +85,7 @@ function loadScene() {
 
   base = new Mesh(
     readTextFile("resources/base.obj"),
-    vec3.fromValues(50, 50, 0)
+    vec3.fromValues(0, 10, 0)
   );
   putBase();
 
@@ -213,15 +213,27 @@ function main() {
     requestAnimationFrame(tick);
   }
 
+  // lock the mouse at the center of screen ------------------------------------------------
+  // from: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API
+  canvas.onclick = function () {
+    canvas.requestPointerLock();
+  };
+
+  function handleMouseMovement(event: MouseEvent) {
+    player.handleMouseMovement(event);
+  }
+
+  function mouseLockChangeAlert() {
+    if (document.pointerLockElement === canvas) {
+      document.addEventListener("mousemove", handleMouseMovement, false);
+    } else {
+      document.removeEventListener("mousemove", handleMouseMovement, false);
+    }
+  }
+
   // EVENT LISTENERS------------------------------------------------------------
 
-  window.addEventListener(
-    "mousemove",
-    function (event) {
-      player.handleMouseMovement(event);
-    }, 
-    false
-  );
+  document.addEventListener("pointerlockchange", mouseLockChangeAlert, false);
 
   window.addEventListener(
     "resize",
