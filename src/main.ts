@@ -10,6 +10,7 @@ import ShaderProgram, { Shader } from "./rendering/gl/ShaderProgram";
 import Mesh from "./geometry/Mesh";
 import LSystem from "./l-system/L-System";
 import { readTextFile } from "../src/globals";
+import Terrain from "./terrain/terrain";
 
 var palette = {
   color1: [255, 127.0, 80.0, 1.0], // branch
@@ -35,13 +36,19 @@ let prevColor2: vec4 = vec4.fromValues(
 
 let square: Square;
 let screenQuad: ScreenQuad;
+let terrain: Mesh = new Mesh(
+  readTextFile("resources/plane.obj"),
+  vec3.fromValues(10, 10, 10)
+);
+let terrainClass: Terrain;
+
 let time: number = 0.0;
 let branch: Mesh;
 let matrix: mat4 = mat4.create();
 let coral: LSystem = new LSystem(4, 15, 1, prevColor1, prevColor2);
 let base: Mesh = new Mesh(
   readTextFile("resources/base.obj"),
-  vec3.fromValues(50, 50, 0)
+  vec3.fromValues(0, 0, 0)
 );
 
 function putBase() {
@@ -74,6 +81,7 @@ const controls = {
 };
 
 function loadScene() {
+
   coral = new LSystem(
     controls.iterations,
     controls.angle,
@@ -83,12 +91,18 @@ function loadScene() {
   );
   coral.makeTree();
 
-  base = new Mesh(
-    readTextFile("resources/base.obj"),
-    vec3.fromValues(50, 50, 0)
-  );
   putBase();
 
+  // KEEP THIS FOR NOW: creates a terrain shape imported from a Maya OBJ
+  terrain.create();
+  terrain.setNumInstances(1);
+
+  // KEEP THIS FOR NOW: creates terrain based on terrain class
+  terrainClass = new Terrain();
+  terrainClass.create();
+  terrainClass.setNumInstances(1);
+
+  // background
   screenQuad = new ScreenQuad();
   screenQuad.create();
 }
@@ -125,22 +139,29 @@ function main() {
   loadScene();
 
   const camera = new Camera(
-    vec3.fromValues(-60, 90, 15),
-    vec3.fromValues(50, 100, 0)
+    vec3.fromValues(0, 0, 0),
+    vec3.fromValues(10, 0, 10)
   );
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
   gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.DEPTH_TEST);
 
   const instancedShader = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require("./shaders/instanced-vert.glsl")),
     new Shader(gl.FRAGMENT_SHADER, require("./shaders/instanced-frag.glsl")),
   ]);
 
-  const flat = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require("./shaders/flat-vert.glsl")),
-    new Shader(gl.FRAGMENT_SHADER, require("./shaders/flat-frag.glsl")),
+  // const flat = new ShaderProgram([
+  //   new Shader(gl.VERTEX_SHADER, require("./shaders/flat-vert.glsl")),
+  //   new Shader(gl.FRAGMENT_SHADER, require("./shaders/flat-frag.glsl")),
+  // ]);
+
+  const lambert = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require("./shaders/lambert-vert.glsl")),
+    new Shader(gl.FRAGMENT_SHADER, require("./shaders/lambert-frag.glsl")),
   ]);
 
   function vec4Equals(a: vec4, b: vec4) {
@@ -198,12 +219,17 @@ function main() {
     }
     camera.update();
     stats.begin();
-    instancedShader.setTime(time);
-    flat.setTime(time++);
+    //instancedShader.setTime(time);
+    //flat.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
-    renderer.render(camera, flat, [screenQuad]);
-    renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
+    //renderer.render(camera, flat, []);
+    //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
+    renderer.render(camera, lambert, [terrainClass]);
+
+    //console.log("cam is at ");
+    //console.log(camera.position);
+
     stats.end();
 
     // Tell the browser to call `tick` again whenever it renders a new frame
@@ -216,7 +242,7 @@ function main() {
       renderer.setSize(window.innerWidth, window.innerHeight);
       camera.setAspectRatio(window.innerWidth / window.innerHeight);
       camera.updateProjectionMatrix();
-      flat.setDimensions(window.innerWidth, window.innerHeight);
+      //flat.setDimensions(window.innerWidth, window.innerHeight);
     },
     false
   );
@@ -224,7 +250,7 @@ function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
   camera.updateProjectionMatrix();
-  flat.setDimensions(window.innerWidth, window.innerHeight);
+  //flat.setDimensions(window.innerWidth, window.innerHeight);
 
   // Start the render loop
   tick();
