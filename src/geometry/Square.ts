@@ -6,6 +6,7 @@ class Square extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   colors: Float32Array;
+  normals: Float32Array;
   offsets: Float32Array; // Data for bufTranslate
 
   tCol1: Float32Array; // Data for bufTransform1
@@ -21,22 +22,28 @@ class Square extends Drawable {
 
   create() {
 
-  this.indices = new Uint32Array([0, 1, 2,
+    this.indices = new Uint32Array([0, 1, 2,
                                   0, 2, 3]);
-  this.positions = new Float32Array([-0.5, -0.5, 0, 1,
+    this.positions = new Float32Array([-0.5, 0.5, 0, 1,
+                                     -0.5, -0.5, 0, 1,
                                      0.5, -0.5, 0, 1,
-                                     0.5, 0.5, 0, 1,
-                                     -0.5, 0.5, 0, 1]);
+                                     0.5, 0.5, 0, 1]);
+
+    this.colors = new Float32Array([1.0, 0.0, 1.0, 1.0, 
+                                    1.0, 0.0, 1.0, 1.0,
+                                    1.0, 0.0, 1.0, 1.0, 
+                                    1.0, 0.0, 1.0, 1.0]);
+
+    this.normals = new Float32Array([0.0, 0.0, 1.0, 0.0, 
+                                    0.0, 0.0, 1.0, 0.0,
+                                    0.0, 0.0, 1.0, 0.0, 
+                                    0.0, 0.0, 1.0, 0.0
+    ]);
 
     this.generateIdx();
     this.generatePos();
     this.generateCol();
-    this.generateTranslate();
-
-    this.generateTransform1();
-    this.generateTransform2();
-    this.generateTransform3();
-    this.generateTransform4();
+    this.generateNor();
 
 
     this.count = this.indices.length;
@@ -45,6 +52,12 @@ class Square extends Drawable {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
+    gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufNor);
+    gl.bufferData(gl.ARRAY_BUFFER, this.normals, gl.STATIC_DRAW);
 
     console.log(`Created square`);
   }
