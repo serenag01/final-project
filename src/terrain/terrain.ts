@@ -93,26 +93,29 @@ class Terrain extends Drawable {
                 norTemp.push(0.0);
                 norTemp.push(0.0);
 
-                // push color vertices - all white for now
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // push color vertices - all lilac for now
+                for (let r = 0; r < 16; r++) {
+                    colTemp.push(.784, .635, .784, 1.0);
+                }
+                // colTemp.push(.784, .635, .784, 1.0);
+                // colTemp.push(.784, .635, .784, 1.0);
+                // colTemp.push(.784, .635, .784, 1.0);
+                // colTemp.push(.784, .635, .784, 1.0);
 
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
 
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
 
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
-                colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
+                // colTemp.push(1.0, 0.0, 0.0, 1.0);
             }
         }
 

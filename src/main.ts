@@ -66,7 +66,7 @@ function putBase() {
   let bCol3: Float32Array = new Float32Array(base3);
   let bCol4: Float32Array = new Float32Array(base4);
   let bcolors: Float32Array = new Float32Array(cols);
-  //base.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
+  base.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
   base.setNumInstances(1);
 
 }
@@ -81,6 +81,7 @@ const controls = {
 };
 
 function loadScene() {
+
   coral = new LSystem(
     controls.iterations,
     controls.angle,
@@ -89,6 +90,8 @@ function loadScene() {
     prevColor2
   );
   coral.makeTree();
+
+  putBase();
 
   // KEEP THIS FOR NOW: creates a terrain shape imported from a Maya OBJ
   terrain.create();
@@ -146,10 +149,10 @@ function main() {
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
 
-  // const instancedShader = new ShaderProgram([
-  //   new Shader(gl.VERTEX_SHADER, require("./shaders/instanced-vert.glsl")),
-  //   new Shader(gl.FRAGMENT_SHADER, require("./shaders/instanced-frag.glsl")),
-  // ]);
+  const instancedShader = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require("./shaders/instanced-vert.glsl")),
+    new Shader(gl.FRAGMENT_SHADER, require("./shaders/instanced-frag.glsl")),
+  ]);
 
   // const flat = new ShaderProgram([
   //   new Shader(gl.VERTEX_SHADER, require("./shaders/flat-vert.glsl")),
@@ -221,7 +224,7 @@ function main() {
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
     //renderer.render(camera, flat, []);
-    //renderer.render(camera, instancedShader, []);
+    //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
     renderer.render(camera, lambert, [terrainClass]);
 
     //console.log("cam is at ");
