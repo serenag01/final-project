@@ -1,8 +1,9 @@
-import {mat4, vec4, mat3} from 'gl-matrix';
+import {mat4, vec4, mat3, vec3} from 'gl-matrix';
 import Drawable from './Drawable';
 import Camera from '../../Camera';
 import {gl} from '../../globals';
 import ShaderProgram from './ShaderProgram';
+import Player from '../../player/Player';
 
 // In this file, `gl` is accessible because it is imported above
 class OpenGLRenderer {
@@ -22,7 +23,7 @@ class OpenGLRenderer {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
-  render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>) {
+  render(player: Player, camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>) {
     let model = mat4.create();
     let viewProj = mat4.create();
     let color = vec4.fromValues(1, 0, 0, 1);
@@ -39,6 +40,9 @@ class OpenGLRenderer {
     prog.setModelMatrix(model);
     prog.setViewProjMatrix(viewProj);
     prog.setCameraAxes(axes);
+
+    let dist : vec3 = player.distanceFromStart;
+    prog.setDistFromStart(dist);
 
     for (let drawable of drawables) {
       prog.draw(drawable);

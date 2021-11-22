@@ -40,6 +40,7 @@ class ShaderProgram {
   unifEye: WebGLUniformLocation;
   unifUp: WebGLUniformLocation;
   unifDimensions: WebGLUniformLocation;
+  unifDistFromStart: WebGLUniformLocation;
 
   constructor(shaders: Array<Shader>) {
     this.prog = gl.createProgram();
@@ -70,6 +71,7 @@ class ShaderProgram {
     this.unifEye = gl.getUniformLocation(this.prog, "u_Eye");
     this.unifRef = gl.getUniformLocation(this.prog, "u_Ref");
     this.unifUp = gl.getUniformLocation(this.prog, "u_Up");
+    this.unifDistFromStart = gl.getUniformLocation(this.prog, "u_DistFromStart");
   }
 
   use() {
@@ -89,6 +91,13 @@ class ShaderProgram {
     }
     if (this.unifUp !== -1) {
       gl.uniform3f(this.unifUp, up[0], up[1], up[2]);
+    }
+  }
+
+  setDistFromStart(dist: vec3) {
+    this.use();
+    if (this.unifDistFromStart !== -1) {
+      gl.uniform3f(this.unifDistFromStart, dist[0], dist[1], dist[2]);
     }
   }
 
