@@ -4,7 +4,8 @@ import { mat3, vec3, quat } from "gl-matrix";
 const PI = 3.1415926535;
 
 class Turtle {
-  position: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
+  position: vec3;
+  startposition: vec3;
   orientation: mat3 = mat3.create();
   depth: number = 0;
   angle : number = 15;
@@ -33,6 +34,7 @@ class Turtle {
     this.orientation = orient;
     this.depth = 0;
     this.angle = a;
+    this.startposition = pos;
 
     this.getForward = () => {
       return vec3.fromValues(
@@ -82,6 +84,10 @@ class Turtle {
       let offset = Math.sin(2.0 * rand);
       // multiply value by 10
       offset = offset * 10.0;
+
+      if (this.angle >= 90.0) {
+        offset = 0;
+      }
 
       vec3.normalize(axis, axis);
       let radians = (PI * (angle + offset)) / 180.0;
@@ -144,7 +150,7 @@ class Turtle {
   }
 
   reset() {
-    this.position = vec3.fromValues(50.0, 50.0, 0.0);
+    this.position = vec3.fromValues(this.startposition[0], this.startposition[1], this.startposition[2]);
     this.orientation = mat3.identity(this.orientation);
     this.depth = 0;
   }
