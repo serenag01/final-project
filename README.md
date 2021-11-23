@@ -39,8 +39,15 @@ Here are the main technical/algorithmic tools we’ll be using:
 Thus far, we have created an engine that the player can move around in using keyboard and mouse controls. We have set constraints that move the player back to spawn if they travel too far, and we also change the color of the sky and terrain as the player moves farther away from spawn.
 
 ### Trouble Makers:
+- instanced rendering trees
+- modifying grammar
+- converting lambertian shader to account for adjustments due to distance
+- keeping player grounded
 
 ### Example Images:
+![image](https://user-images.githubusercontent.com/60444726/142969128-989abb26-0b4b-4f1b-abed-2796b4c42ae8.png)
+
+![image](https://user-images.githubusercontent.com/60444726/142969179-fb43fc6a-bc69-40f8-b196-14db582e72fa.png)
 
 
 Begin implementing your engine! Don't worry too much about polish or parameter tuning -- this week is about getting together the bulk of your generator implemented. By the end of the week, even if your visuals are crude, the majority of your generator's functionality should be done.
