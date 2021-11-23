@@ -95,7 +95,7 @@ class Terrain extends Drawable {
 
                 // push color vertices - all lilac for now
                 for (let r = 0; r < 16; r++) {
-                    colTemp.push(.784, .635, .784, 1.0);
+                    colTemp.push(7.0/ 255.0, 54.0/255.0, 48/255.0, 1.0);
                 }
                 // colTemp.push(.784, .635, .784, 1.0);
                 // colTemp.push(.784, .635, .784, 1.0);
