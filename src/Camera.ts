@@ -7,7 +7,7 @@ class Camera {
   fovy: number = (45 * Math.PI) / 180.0;
   aspectRatio: number = 1;
   near: number = 0.1;
-  far: number = 100;
+  far: number = 1000;
   position: vec3 = vec3.create();
   target: vec3 = vec3.create();
   up: vec3 = vec3.fromValues(0, 1, 0);

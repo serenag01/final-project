@@ -12,6 +12,7 @@
 precision highp float;
 
 uniform vec4 u_Color; // The color with which to render this instance of geometry.
+uniform vec3 u_DistFromStart;
 
 // These are the interpolated values out of the rasterizer, so you can't know
 // their specific values without knowing the vertices that contributed to them
@@ -25,7 +26,8 @@ out vec4 out_Col; // This is the final output color that you will see on your
 void main()
 {
     // Material base color (before shading)
-        vec4 diffuseColor = fs_Col;
+        // test to see if u_DistanceFromStart is set up properly
+        vec4 diffuseColor = fs_Col * (length(u_DistFromStart) / 1000.0);
 
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));

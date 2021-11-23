@@ -107,6 +107,17 @@ function loadScene() {
   screenQuad.create();
 }
 
+
+function calculateClearColor(player : Player) {
+  let dist : vec3 = vec3.clone(player.distanceFromStart);
+  let clearColor : vec3 = vec3.fromValues(0.0, 0.0, 0.0);
+  let distScale :number = vec3.length(dist) / 1000.0;
+  clearColor = vec3.scaleAndAdd(clearColor, clearColor, vec3.fromValues(1.0, 1.0, 1.0), distScale)
+
+  return vec4.fromValues(clearColor[0], clearColor[1], clearColor[2], 1.0);
+}
+
+
 function main() {
   // Initial display for framerate
   const stats = Stats();
@@ -140,13 +151,14 @@ function main() {
 
   const camera = new Camera(
     vec3.fromValues(0, 0, 0),
-    vec3.fromValues(10, 0, 10)
+    vec3.fromValues(10, 10, 10)
   );
 
   let player: Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
-  renderer.setClearColor(0.2, 0.2, 0.2, 1);
+  let clearColor : vec4 = calculateClearColor(player);
+  renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
   gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
@@ -228,10 +240,11 @@ function main() {
     renderer.clear();
     //renderer.render(camera, flat, []);
     //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
-    renderer.render(camera, lambert, [terrainClass]);
+    renderer.render(player, camera, lambert, [terrainClass]);
 
-    //console.log("cam is at ");
-    //console.log(camera.position);
+    // set clear color based on player's position
+    let clearColor : vec4 = calculateClearColor(player);
+    renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
 
     stats.end();
 
