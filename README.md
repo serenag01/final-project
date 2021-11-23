@@ -53,7 +53,7 @@ Milestone 1:
 
 ![image](https://user-images.githubusercontent.com/43430369/142970249-ecf053c6-22fd-4db3-805f-343fa6a005f1.png)
 
-
+This week, Serena and Di implemented player state, player movement, random scattering of trees, and distance-based tree generation. The terrain currently contains many trees which are shorter and more "natural-looking" the closer to the origin, and more "rectangular" as it gets further away. As the player moves away, the trees become taller until eventually the player is reset to the beginning of the plane. 
 
 Begin implementing your engine! Don't worry too much about polish or parameter tuning -- this week is about getting together the bulk of your generator implemented. By the end of the week, even if your visuals are crude, the majority of your generator's functionality should be done.
 
