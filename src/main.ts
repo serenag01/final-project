@@ -99,7 +99,7 @@ const controls = {
 function createTrees() {
   // factors that determine the "natural-ness" of a tree
   let treeIters = 1;
-  let angle = 10;
+  //let angle = 10;
 
   // generate trees on the terrain
   for (let i = 0; i < terrainClass.sideLength; i++) {
@@ -114,8 +114,12 @@ function createTrees() {
   
         let treePos = vec4.fromValues(x, 0.0, z, 1.0);
 
-        angle += 1;
-        //treeIters += Math.floor(i / 10);
+        let distanceFromOrigin = Math.sqrt(i * i + j * j);
+        console.log("distnace from origin");
+        console.log(distanceFromOrigin);
+        let angle = 10 + distanceFromOrigin;
+
+        treeIters += Math.floor(i / 100);
 
         // clamp angle and tree iters
         if (angle > 90) {

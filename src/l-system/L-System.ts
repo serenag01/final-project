@@ -289,7 +289,7 @@ class LSystem {
     };
 
     this.makeTree = () => {
-      this.setSeed("FX");
+      this.setSeed("FB");
       this.axioms = [this.seed];
 
       this.populateExpansionRules();
