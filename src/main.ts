@@ -270,10 +270,10 @@ function main() {
     //renderer.render(camera, flat, []);
     //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
 
-    renderer.render(camera, lambert, [terrainClass]);
-    renderer.render(camera, instancedShader, treeBases);
-    renderer.render(camera, instancedShader, treeBranches);
-    renderer.render(camera, instancedShader, treeLeaves);
+    renderer.render(player, camera, lambert, [terrainClass]);
+    renderer.render(player, camera, instancedShader, treeBases);
+    renderer.render(player, camera, instancedShader, treeBranches);
+    renderer.render(player, camera, instancedShader, treeLeaves);
 
     // set clear color based on player's position
     let clearColor : vec4 = calculateClearColor(player);
