@@ -110,11 +110,11 @@ class LSystem {
 
     this.populateExpansionRules = () => {
       let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("FF#-F^F+[+-F#]", 1.0); // * is the same as \ in houdini here
+      rule1.addOutput("FF", 1.0); // * is the same as \ in houdini here
       this.expansionRules.set("F", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
-      rule2.addOutput("++&[F]", 1.0);
+      rule2.addOutput("X[+FX][-FX]", 1.0);
       this.expansionRules.set("X", rule2);
     };
 
@@ -154,6 +154,7 @@ class LSystem {
       let forwardRule: DrawingRule = new DrawingRule();
       forwardRule.addOutput(this.drawBranch, 1.0);
       this.drawingRules.set("F", forwardRule);
+      this.drawingRules.set("X", forwardRule);
 
       let leafRule: DrawingRule = new DrawingRule();
       leafRule.addOutput(this.putLeaf, 1.0);
@@ -241,6 +242,8 @@ class LSystem {
       // Draw based on grammar
       let count = 0;
       for (let i = 0; i < this.axioms[this.iterations].length; i++) {
+        console.log(this.drawingRules);
+        console.log(this.axioms[this.iterations].charAt(i));
         let func = this.drawingRules
           .get(this.axioms[this.iterations].charAt(i))
           .getOutput();
