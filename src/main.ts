@@ -98,7 +98,7 @@ const controls = {
 // generate trees 
 function createTrees() {
   // factors that determine the "natural-ness" of a tree
-  let treeIters = 1;
+  let treeIters = 2;
   //let angle = 10;
 
   // generate trees on the terrain
@@ -119,7 +119,7 @@ function createTrees() {
         console.log(distanceFromOrigin);
         let angle = 10 + distanceFromOrigin;
 
-        treeIters += Math.floor(i / 100);
+        treeIters = Math.floor( distanceFromOrigin / 30);
 
         // clamp angle and tree iters
         if (angle > 90) {

@@ -242,8 +242,8 @@ class LSystem {
       // Draw based on grammar
       let count = 0;
       for (let i = 0; i < this.axioms[this.iterations].length; i++) {
-        console.log(this.drawingRules);
-        console.log(this.axioms[this.iterations].charAt(i));
+        // console.log(this.drawingRules);
+        // console.log(this.axioms[this.iterations].charAt(i));
         let func = this.drawingRules
           .get(this.axioms[this.iterations].charAt(i))
           .getOutput();
@@ -289,7 +289,7 @@ class LSystem {
     };
 
     this.makeTree = () => {
-      this.setSeed("FB");
+      this.setSeed("FX");
       this.axioms = [this.seed];
 
       this.populateExpansionRules();
