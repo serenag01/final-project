@@ -125,7 +125,9 @@ class Player {
       vec3.add(direction, direction, this.camera.right);
     }
 
+    // normalize direction and force movement only in ground plane (no flying!)
     vec3.normalize(direction, direction);
+   // vec3.copy(direction, vec3.fromValues(direction[0], 0, direction[2]));
 
     vec3.scaleAndAdd(this.position, this.position, direction, dT * 100.0);
 

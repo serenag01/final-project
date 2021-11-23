@@ -151,7 +151,7 @@ function main() {
 
   const camera = new Camera(
     vec3.fromValues(0, 0, 0),
-    vec3.fromValues(10, 0, 10)
+    vec3.fromValues(10, 10, 10)
   );
 
   let player: Player = new Player(camera, camera.position, camera.forward);
@@ -241,11 +241,10 @@ function main() {
     //renderer.render(camera, flat, []);
     //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
     renderer.render(player, camera, lambert, [terrainClass]);
+
+    // set clear color based on player's position
     let clearColor : vec4 = calculateClearColor(player);
     renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
-
-    //console.log("cam is at ");
-    //console.log(camera.position);
 
     stats.end();
 
