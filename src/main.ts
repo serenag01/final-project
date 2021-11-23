@@ -35,30 +35,41 @@ let prevColor2: vec4 = vec4.fromValues(
   1.0
 );
 
-let square: Square;
 let screenQuad: ScreenQuad;
-let terrain: Mesh = new Mesh(
-  readTextFile("resources/plane.obj"),
-  vec3.fromValues(10, 10, 10)
-);
+// let terrain: Mesh = new Mesh(
+//   readTextFile("resources/plane.obj"),
+//   vec3.fromValues(10, 10, 10)
+// );
 let terrainClass: Terrain;
 
 let time: number = 0.0;
-let branch: Mesh;
-let matrix: mat4 = mat4.create();
-let coral: LSystem = new LSystem(4, 15, 1, prevColor1, prevColor2);
-let base: Mesh = new Mesh(
+//let branch: Mesh;
+//let matrix: mat4 = mat4.create();
+//let coral: LSystem = new LSystem(vec4.fromValues(0.0, 0.0, 0.0, 1.0), 4, 15, 1, prevColor1, prevColor2);
+//let coral: LSystem;
+/*let base: Mesh = new Mesh(
   readTextFile("resources/base.obj"),
   vec3.fromValues(0, 0, 0)
-);
+);*/
 
-function putBase() {
+let treeLocations: Array<[number, number]> = [];
+let treeBases: Mesh[] = [];
+let treeBranches: Mesh[] = [];
+let treeLeaves: Mesh[] = [];
+
+
+function createBase(x: number, z: number) {
+  let base = new Mesh(
+    readTextFile("resources/base.obj"),
+    vec3.fromValues(x, 0, z)
+  )
+
   base.create();
 
   let base1 = [5, 0, 0, 0];
   let base2 = [0, 10, 0, 0];
   let base3 = [0, 0, 5, 0];
-  let base4 = [0, 0, 0, 1];
+  let base4 = [0, 2, 0, 1];
 
   let cols = [0.761, 0.698, 0.502, 1.0];
 
@@ -69,6 +80,8 @@ function putBase() {
   let bcolors: Float32Array = new Float32Array(cols);
   base.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
   base.setNumInstances(1);
+
+  treeBases.push(base);
 }
 
 // Define an object with application parameters and button callbacks
@@ -80,27 +93,90 @@ const controls = {
   Generate: loadScene,
 };
 
+// NOISE FUNCTIONS:
+
+// generate trees 
+function createTrees() {
+  // factors that determine the "natural-ness" of a tree
+  let treeIters = 1;
+  let angle = 10;
+
+  // generate trees on the terrain
+  for (let i = 0; i < terrainClass.sideLength; i++) {
+    //treeIters += 1;
+    for (let j = 0; j < terrainClass.sideLength; j++) {
+
+      let rand = Math.random();
+
+      if (rand < 0.1) {
+        let x = i * terrainClass.squareDims;
+        let z = j * terrainClass.squareDims;
+  
+        let treePos = vec4.fromValues(x, 0.0, z, 1.0);
+
+        angle += 1;
+        //treeIters += Math.floor(i / 10);
+
+        // clamp angle and tree iters
+        if (angle > 90) {
+          angle = 90;
+        }
+
+        if (treeIters > 7) {
+          treeIters = 7; 
+        }
+
+        let s = 1;
+        let col1 = vec4.fromValues(
+          255.0,
+          255.0,
+          255.0,
+          255.0
+        );
+        let col2 = vec4.fromValues(
+          255.0,
+          1.0,
+          1.0,
+          1.0
+        );
+        //createBase(x, z);
+  
+        let tree = new LSystem(treePos, treeIters, angle, s, col1, col2);
+  
+        treeBranches.push(tree.branch);
+        treeLeaves.push(tree.leaf);
+        
+        tree.makeTree();
+      }
+    }
+  }
+}
+
 function loadScene() {
 
-  coral = new LSystem(
-    controls.iterations,
-    controls.angle,
-    controls.decoration_scale,
-    prevColor1,
-    prevColor2
-  );
-  coral.makeTree();
+  // coral = new LSystem(
+  //   vec4.fromValues(0.0, 0.0, 0.0, 1.0),
+  //   controls.iterations,
+  //   controls.angle,
+  //   controls.decoration_scale,
+  //   prevColor1,
+  //   prevColor2
+  // );
+
+  //coral.makeTree();
   
-  putBase();
+  //putBase();
 
   // KEEP THIS FOR NOW: creates a terrain shape imported from a Maya OBJ
-  terrain.create();
-  terrain.setNumInstances(1);
+  //terrain.create();
+  //terrain.setNumInstances(1);
 
   // KEEP THIS FOR NOW: creates terrain based on terrain class
   terrainClass = new Terrain();
   terrainClass.create();
   terrainClass.setNumInstances(1);
+
+  createTrees();
 
   // background
   screenQuad = new ScreenQuad();
@@ -150,8 +226,8 @@ function main() {
   loadScene();
 
   const camera = new Camera(
-    vec3.fromValues(0, 0, 0),
-    vec3.fromValues(10, 10, 10)
+    vec3.fromValues(30, 10, 30),
+    vec3.fromValues(100, 0, 100)
   );
 
   let player: Player = new Player(camera, camera.position, camera.forward);
@@ -159,7 +235,6 @@ function main() {
   const renderer = new OpenGLRenderer(canvas);
   let clearColor : vec4 = calculateClearColor(player);
   renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
-  gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
 
@@ -184,68 +259,25 @@ function main() {
 
   // This function will be called every frame
   function tick() {
-    if (
-      controls.iterations != prevIters ||
-      controls.angle != prevAngle ||
-      controls.decoration_scale != prevScale ||
-      !vec4Equals(
-        prevColor1,
-        vec4.fromValues(
-          palette.color1[0],
-          palette.color1[1],
-          palette.color1[2],
-          1.0
-        )
-      ) ||
-      !vec4Equals(
-        prevColor2,
-        vec4.fromValues(
-          palette.color2[0],
-          palette.color2[1],
-          palette.color2[2],
-          1.0
-        )
-      )
-    ) {
-      prevIters = controls.iterations;
-      prevAngle = controls.angle;
-      prevScale = controls.decoration_scale;
-      prevColor1 = vec4.fromValues(
-        palette.color1[0],
-        palette.color1[1],
-        palette.color1[2],
-        1.0
-      );
-      prevColor2 = vec4.fromValues(
-        palette.color2[0],
-        palette.color2[1],
-        palette.color2[2],
-        1.0
-      );
-      coral = new LSystem(
-        controls.iterations,
-        controls.angle,
-        controls.decoration_scale,
-        prevColor1,
-        prevColor2
-      );
-      coral.makeTree();
-    }
-    // camera.update();
     player.update(0.01);
     stats.begin();
-    //instancedShader.setTime(time);
+
+    instancedShader.setTime(time);
     //flat.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
+
     //renderer.render(camera, flat, []);
     //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
-    renderer.render(player, camera, lambert, [terrainClass]);
+
+    renderer.render(camera, lambert, [terrainClass]);
+    renderer.render(camera, instancedShader, treeBases);
+    renderer.render(camera, instancedShader, treeBranches);
+    renderer.render(camera, instancedShader, treeLeaves);
 
     // set clear color based on player's position
     let clearColor : vec4 = calculateClearColor(player);
     renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
-
     stats.end();
 
     // Tell the browser to call `tick` again whenever it renders a new frame

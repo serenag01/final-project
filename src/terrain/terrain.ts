@@ -17,7 +17,7 @@ class Terrain extends Drawable {
         super();
         this.origin = vec3.fromValues(0, 0, 0);
         this.sideLength = 70;
-        this.squareDims = 10;
+        this.squareDims = 20;
     }
 
     noise(x: number, z: number) {

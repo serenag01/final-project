@@ -8,11 +8,7 @@ import OpenGLRenderer from "../rendering/gl/OpenGLRenderer";
 
 class LSystem {
   turtleStack: Array<Turtle> = [];
-  turtle: Turtle = new Turtle(
-    15,
-    vec3.fromValues(50.0, 50.0, 0.0),
-    mat3.create()
-  );
+  turtle: Turtle;
   drawingRules: Map<string, DrawingRule> = new Map();
   expansionRules: Map<string, ExpansionRule> = new Map();
   seed: string;
@@ -22,6 +18,7 @@ class LSystem {
   scale = 1;
   color1 = vec4.fromValues(255 / 255, 127.0 / 255.0, 80.0 / 255.0, 1.0);
   color2 = vec4.fromValues(57 / 255.0, 217 /255.0, 222 / 255.0, 1.0);
+  position: vec4;
 
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
@@ -39,15 +36,9 @@ class LSystem {
   leafNum: number = 0;
 
   // import objs:
-  branch: Mesh = new Mesh(
-    readTextFile("resources/cylinder.obj"),
-    vec3.fromValues(0, 0, 0)
-  );
+  branch: Mesh;
 
-  leaf: Mesh = new Mesh(
-    readTextFile("resources/sphere.obj"),
-    vec3.fromValues(0, 0, 0)
-  );
+  leaf: Mesh;
 
   drawBranch: () => void;
   setSeed: (s: string) => void;
@@ -62,11 +53,11 @@ class LSystem {
   expandGrammar: () => void;
   makeTree: () => void;
 
-  constructor(iters: number, angle: number, s: number, col1 : vec4, col2 : vec4) {
+  constructor(startPos: vec4, iters: number, angle: number, s: number, col1 : vec4, col2 : vec4) {
     this.turtleStack = [];
     this.turtle = new Turtle(
       angle,
-      vec3.fromValues(50.0, 50.0, 0.0),
+      vec3.fromValues(startPos[0], startPos[1], startPos[2]),
       mat3.create()
     );
     this.iterations = iters;
@@ -74,6 +65,16 @@ class LSystem {
     this.scale = s;
     this.color1 = col1;
     this.color2 = col2;
+
+    this.branch = new Mesh(
+      readTextFile("resources/cylinder.obj"),
+      vec3.fromValues(startPos[0], startPos[1], startPos[2])
+    );
+  
+    this.leaf = new Mesh(
+      readTextFile("resources/sphere.obj"),
+      vec3.fromValues(startPos[0], startPos[1], startPos[2])
+    );
 
     // define functions below to maintain context of "this"
 
@@ -109,13 +110,11 @@ class LSystem {
 
     this.populateExpansionRules = () => {
       let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("FF#-[-/-/FF#+*+*F^F#]+[+/+F/^F#]#", 0.9); // * is the same as \ in houdini here
-      rule1.addOutput("[-*^F]#", 0.1);
+      rule1.addOutput("FF#-F^F+[+-F#]", 1.0); // * is the same as \ in houdini here
       this.expansionRules.set("F", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
-      rule2.addOutput("++//&&[F]", 0.9);
-      rule2.addOutput("--**^^X#", 0.1);
+      rule2.addOutput("++&[F]", 1.0);
       this.expansionRules.set("X", rule2);
     };
 
@@ -129,33 +128,27 @@ class LSystem {
       this.drawingRules.set("]", popRule);
 
       let rotateLeftXRule: DrawingRule = new DrawingRule();
-      rotateLeftXRule.addOutput(this.turtle.rotateLeftX, 0.9);
-      rotateLeftXRule.addOutput(this.turtle.rotateBigLeftX, 0.1);
+      rotateLeftXRule.addOutput(this.turtle.rotateLeftX, 1.0);
       this.drawingRules.set("+", rotateLeftXRule);
 
       let rotateRightXRule: DrawingRule = new DrawingRule();
-      rotateRightXRule.addOutput(this.turtle.rotateRightX, 0.9);
-      rotateRightXRule.addOutput(this.turtle.rotateBigRightX, 0.1);
+      rotateRightXRule.addOutput(this.turtle.rotateRightX, 1.0);
       this.drawingRules.set("-", rotateRightXRule);
 
       let rotatePosYRule: DrawingRule = new DrawingRule();
-      rotatePosYRule.addOutput(this.turtle.rotatePosY, 0.9);
-      rotatePosYRule.addOutput(this.turtle.rotateBigPosY, 0.1);
+      rotatePosYRule.addOutput(this.turtle.rotatePosY, 1.0);
       this.drawingRules.set("*", rotatePosYRule);
 
       let rotateNegYRule: DrawingRule = new DrawingRule();
-      rotateNegYRule.addOutput(this.turtle.rotateNegY, 0.9);
-      rotateNegYRule.addOutput(this.turtle.rotateBigNegY, 0.1);
+      rotateNegYRule.addOutput(this.turtle.rotateNegY, 1.0);
       this.drawingRules.set("/", rotateNegYRule);
 
       let rotatePosZRule: DrawingRule = new DrawingRule();
-      rotatePosZRule.addOutput(this.turtle.rotatePosZ, 0.9);
-      rotatePosZRule.addOutput(this.turtle.rotateBigPosZ, 0.1);
+      rotatePosZRule.addOutput(this.turtle.rotatePosZ, 1.0);
       this.drawingRules.set("&", rotatePosZRule);
 
       let rotateNegZRule: DrawingRule = new DrawingRule();
-      rotateNegZRule.addOutput(this.turtle.rotateNegZ, 0.9);
-      rotateNegZRule.addOutput(this.turtle.rotateBigNegZ, 0.1);
+      rotateNegZRule.addOutput(this.turtle.rotateNegZ, 1.0);
       this.drawingRules.set("^", rotateNegZRule);
 
       let forwardRule: DrawingRule = new DrawingRule();
