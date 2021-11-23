@@ -40,6 +40,9 @@ void main()
                                                             //to simulate ambient lighting. This ensures that faces that are not
                                                             //lit by our point light are not completely black.
 
+        // adjust light intensity so ground and sky turn white at the same time
+        lightIntensity *= 2.75 - (ratio);
+        lightIntensity = clamp(lightIntensity, 0.50, 1.2);
         // Compute final shaded color
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 }
