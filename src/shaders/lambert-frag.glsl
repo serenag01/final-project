@@ -26,8 +26,9 @@ out vec4 out_Col; // This is the final output color that you will see on your
 void main()
 {
     // Material base color (before shading)
-        // test to see if u_DistanceFromStart is set up properly
-        vec4 diffuseColor = fs_Col * (length(u_DistFromStart) / 1000.0);
+        vec4 inverse  =vec4(1.0) - fs_Col;
+        float ratio = 1.0 - length(u_DistFromStart) / 1000.0; 
+        vec4 diffuseColor = vec4(vec3(vec4(1.0) - (inverse * ratio)), 1.0);
 
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
