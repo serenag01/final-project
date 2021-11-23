@@ -1,37 +1,48 @@
-# Final Project!
+# Coraline Walking Simulator (by Di Lu and Serena Gandhi)
 
-This is it! The culmination of your procedural graphics experience this semester. For your final project, we'd like to give you the time and space to explore a topic of your choosing. You may choose any topic you please, so long as you vet the topic and scope with an instructor or TA. We've provided some suggestions below. The scope of your project should be roughly 1.5 homework assignments). To help structure your time, we're breaking down the project into 4 milestones:
+## Design Doc
 
-## Milestone 1: Project planning (due 11/15)
-Before submitting your first milestone, _you must get your project idea and scope approved by Rachel, Adam or a TA._
-
-### Design Doc
-Start off by forking this repository. In your README, write a design doc to outline your project goals and implementation plan. It must include the following sections:
-
-#### Introduction
-- What motivates your project?
+#### Project Motivation
+- Di Lu and Serena Gandhi both share a deep love for Coraline (2009). We knew we wanted to incorporate the visual elements from the film, and while watching a "in the making" video of Coraline, stumbled upon the scene in which Coraline runs away (https://www.youtube.com/watch?v=91nfNp7MVIw) and noticed that it has great procedural graphics potential.
 
 #### Goal
-- What do you intend to achieve with this project?
+- In this project, Di and I intend to create a presentable and working project that will fit well on a demo reel. We also hope to deepen our understanding of the procedural pipeline as it applies to larger projects. Neither Di or Serena have worked on a project of this scope with so much freedom, so we are excited to learn from this process! 
 
 #### Inspiration/reference:
-- You must have some form of reference material for your final project. Your reference may be a research paper, a blog post, some artwork, a video, another class at Penn, etc.  
-- Include in your design doc links to and images of your reference material.
+- https://www.youtube.com/watch?v=91nfNp7MVIw
+- ![image](https://user-images.githubusercontent.com/60444726/141865552-a3a7e93b-9b17-426b-bd80-28f5e8d90aae.png)
+- ![image](https://user-images.githubusercontent.com/60444726/141865591-80497847-05b5-4a3a-a51a-de41f66862d6.png)
+- ![image](https://user-images.githubusercontent.com/60444726/141865624-49270621-bb91-4aa1-bacb-24e14c17f3a1.png)
+
 
 #### Specification:
-- Outline the main features of your project.
+- In this project, Di and I intend to create a walking simulator in which the player can move around an intially fully-populated forest in the style of Coraline. The further from their spawn point they travel, the more sparse, cubist, and pixelated the scene becomes, just like in the scene from the movie. While diverging from the spawn point, trees will begin to look less natural, just as they do in the film. The forest and trees are all generated using instanced rendering and the terrain is generated as the player walks. Additionally, this project will incorporate procedural elements by altering the color palette or "season" and using randomness to generate and place the trees and assets in the forest. This project will require use of keyboard and mouse controls. As a bonus, we may also feature royalty-free music.
 
 #### Techniques:
-- What are the main technical/algorithmic tools you’ll be using? Give an overview, citing specific papers/articles.
+Here are the main technical/algorithmic tools we’ll be using:
+- L-Systems (http://paulbourke.net/fractals/lsys/)
+- Noise Functions (https://graphics.pixar.com/library/WaveletNoise/paper.pdf)
+- Procedurally-generated realtime terrain creation (https://remptongames.com/2021/02/28/how-minecraft-generates-massive-virtual-worlds-from-scratch/)
 
 #### Design:
-- How will your program fit together? Make a simple free-body diagram illustrating the pieces.
+- Here's how our program will fit together:
+
+![](finalProj.png)
 
 #### Timeline:
-- Create a week-by-week set of milestones for each person in your group. Make sure you explicitly outline what each group member's duties will be.
+- 11/22: Di- OBJs, L-Systems Tree Generation, Terrain Generation; Serena- Player Physics, Player State,
+- 11/29: Di and Serena- phase-in effect and incorporating player state with generation properties (by the end of this week, hopefully  have black sky and white terrain with structures, which will both exhibit desired behavior such as phasing in/out in a pixelated manner and becoming less natural). 
+- 12/06: Di- add textures, polish OBJs, normals; Serena- flower assets, House generation (stretch)
 
-Submit your Design doc as usual via pull request against this repository.
 ## Milestone 2: Implementation part 1 (due 11/22)
+### Current Progress:
+Thus far, we have created an engine that the player can move around in using keyboard and mouse controls. We have set constraints that move the player back to spawn if they travel too far, and we also change the color of the sky and terrain as the player moves farther away from spawn.
+
+### Trouble Makers:
+
+### Example Images:
+
+
 Begin implementing your engine! Don't worry too much about polish or parameter tuning -- this week is about getting together the bulk of your generator implemented. By the end of the week, even if your visuals are crude, the majority of your generator's functionality should be done.
 
 Put all your code in your forked repository.
@@ -53,7 +64,7 @@ We'll check your repository for updates. No need to create a new pull request.
 Come to class on the due date with a WORKING COPY of your project. We'll be spending time in class critiquing and reviewing your work so far.
 
 ## Final submission (due 12/6)
-Time to polish! Spen this last week of your project using your generator to produce beautiful output. Add textures, tune parameters, play with colors, play with camera animation. Take the feedback from class critques and use it to take your project to the next level.
+Time to polish! Spend this last week of your project using your generator to produce beautiful output. Add textures, tune parameters, play with colors, play with camera animation. Take the feedback from class critques and use it to take your project to the next level.
 
 Submission:
 - Push all your code / files to your repository
