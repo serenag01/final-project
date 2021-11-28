@@ -5,7 +5,7 @@ import Square from "./geometry/Square";
 import ScreenQuad from "./geometry/ScreenQuad";
 import OpenGLRenderer from "./rendering/gl/OpenGLRenderer";
 import Camera from "./Camera";
-import { setGL } from "./globals";
+import { gl, setGL } from "./globals";
 import ShaderProgram, { Shader } from "./rendering/gl/ShaderProgram";
 import Mesh from "./geometry/Mesh";
 import LSystem from "./l-system/L-System";
@@ -43,6 +43,7 @@ let screenQuad: ScreenQuad;
 let terrainClass: Terrain;
 
 let time: number = 0.0;
+let isTransitioning: boolean = false;
 //let branch: Mesh;
 //let matrix: mat4 = mat4.create();
 //let coral: LSystem = new LSystem(vec4.fromValues(0.0, 0.0, 0.0, 1.0), 4, 15, 1, prevColor1, prevColor2);
@@ -57,12 +58,11 @@ let treeBases: Mesh[] = [];
 let treeBranches: Mesh[] = [];
 let treeLeaves: Mesh[] = [];
 
-
 function createBase(x: number, z: number) {
   let base = new Mesh(
     readTextFile("resources/base.obj"),
     vec3.fromValues(x, 0, z)
-  )
+  );
 
   base.create();
 
@@ -95,7 +95,7 @@ const controls = {
 
 // NOISE FUNCTIONS:
 
-// generate trees 
+// generate trees
 function createTrees() {
   // factors that determine the "natural-ness" of a tree
   let treeIters = 1;
@@ -105,13 +105,12 @@ function createTrees() {
   for (let i = 0; i < terrainClass.sideLength; i++) {
     //treeIters += 1;
     for (let j = 0; j < terrainClass.sideLength; j++) {
-
       let rand = Math.random();
 
       if (rand < 0.1) {
         let x = i * terrainClass.squareDims;
         let z = j * terrainClass.squareDims;
-  
+
         let treePos = vec4.fromValues(x, 0.0, z, 1.0);
 
         angle += 1;
@@ -123,29 +122,19 @@ function createTrees() {
         }
 
         if (treeIters > 7) {
-          treeIters = 7; 
+          treeIters = 7;
         }
 
         let s = 1;
-        let col1 = vec4.fromValues(
-          255.0,
-          255.0,
-          255.0,
-          255.0
-        );
-        let col2 = vec4.fromValues(
-          255.0,
-          1.0,
-          1.0,
-          1.0
-        );
+        let col1 = vec4.fromValues(255.0, 255.0, 255.0, 255.0);
+        let col2 = vec4.fromValues(255.0, 1.0, 1.0, 1.0);
         //createBase(x, z);
-  
+
         let tree = new LSystem(treePos, treeIters, angle, s, col1, col2);
-  
+
         treeBranches.push(tree.branch);
         treeLeaves.push(tree.leaf);
-        
+
         tree.makeTree();
       }
     }
@@ -153,7 +142,6 @@ function createTrees() {
 }
 
 function loadScene() {
-
   // coral = new LSystem(
   //   vec4.fromValues(0.0, 0.0, 0.0, 1.0),
   //   controls.iterations,
@@ -164,7 +152,7 @@ function loadScene() {
   // );
 
   //coral.makeTree();
-  
+
   //putBase();
 
   // KEEP THIS FOR NOW: creates a terrain shape imported from a Maya OBJ
@@ -183,16 +171,19 @@ function loadScene() {
   screenQuad.create();
 }
 
-
-function calculateClearColor(player : Player) {
-  let dist : vec3 = vec3.clone(player.distanceFromStart);
-  let clearColor : vec3 = vec3.fromValues(0.0, 0.0, 0.0);
-  let distScale :number = vec3.length(dist) / 1000.0;
-  clearColor = vec3.scaleAndAdd(clearColor, clearColor, vec3.fromValues(1.0, 1.0, 1.0), distScale)
+function calculateClearColor(player: Player) {
+  let dist: vec3 = vec3.clone(player.distanceFromStart);
+  let clearColor: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
+  let distScale: number = vec3.length(dist) / 1000.0;
+  clearColor = vec3.scaleAndAdd(
+    clearColor,
+    clearColor,
+    vec3.fromValues(1.0, 1.0, 1.0),
+    distScale
+  );
 
   return vec4.fromValues(clearColor[0], clearColor[1], clearColor[2], 1.0);
 }
-
 
 function main() {
   // Initial display for framerate
@@ -233,7 +224,7 @@ function main() {
   let player: Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
-  let clearColor : vec4 = calculateClearColor(player);
+  let clearColor: vec4 = calculateClearColor(player);
   renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
@@ -243,10 +234,18 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require("./shaders/instanced-frag.glsl")),
   ]);
 
-  // const flat = new ShaderProgram([
-  //   new Shader(gl.VERTEX_SHADER, require("./shaders/flat-vert.glsl")),
-  //   new Shader(gl.FRAGMENT_SHADER, require("./shaders/flat-frag.glsl")),
-  // ]);
+  const postShader = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require("./shaders/post/noOp-vert.glsl")),
+    new Shader(
+      gl.FRAGMENT_SHADER,
+      require("./shaders/post/transition-frag.glsl")
+    ),
+  ]);
+
+  const flat = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require("./shaders/flat-vert.glsl")),
+    new Shader(gl.FRAGMENT_SHADER, require("./shaders/flat-frag.glsl")),
+  ]);
 
   const lambert = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require("./shaders/lambert-vert.glsl")),
@@ -259,7 +258,8 @@ function main() {
 
   // This function will be called every frame
   function tick() {
-    player.update(0.01);
+    let deltaTime: number = 0.01;
+    player.update(deltaTime);
     stats.begin();
 
     instancedShader.setTime(time);
@@ -267,16 +267,115 @@ function main() {
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
 
-    //renderer.render(camera, flat, []);
-    //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
+    const texWidth = window.innerWidth;
+    const texHeight = window.innerHeight;
 
+    // post-processing, adapted from: https://learnopengl.com/Advanced-OpenGL/Framebuffers
+    let framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+    // generate texture
+    let textureColorbuffer = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGB,
+      texWidth,
+      texHeight,
+      0,
+      gl.RGB,
+      gl.UNSIGNED_BYTE,
+      null
+    );
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    // attach it to currently bound framebuffer object
+    gl.framebufferTexture2D(
+      gl.FRAMEBUFFER,
+      gl.COLOR_ATTACHMENT0,
+      gl.TEXTURE_2D,
+      textureColorbuffer,
+      0
+    );
+
+    let rbo = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+    gl.renderbufferStorage(
+      gl.RENDERBUFFER,
+      gl.DEPTH24_STENCIL8,
+      texWidth,
+      texHeight
+    );
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+    gl.framebufferRenderbuffer(
+      gl.FRAMEBUFFER,
+      gl.DEPTH_STENCIL_ATTACHMENT,
+      gl.RENDERBUFFER,
+      rbo
+    );
+    var FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    if (FBOstatus != gl.FRAMEBUFFER_COMPLETE)
+      console.log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    //1. Render the scene as usual with the new framebuffer bound as the active framebuffer.
+    // first pass
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+    gl.enable(gl.DEPTH_TEST);
     renderer.render(player, camera, lambert, [terrainClass]);
     renderer.render(player, camera, instancedShader, treeBases);
     renderer.render(player, camera, instancedShader, treeBranches);
     renderer.render(player, camera, instancedShader, treeLeaves);
+    // nothing should appear bc we are rendering to the buffer
+
+    //2. Bind to the default framebuffer.
+    // second pass
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); // back to default
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    //3. Draw a quad that spans the entire screen with the new framebuffer's color buffer as its texture.
+    gl.disable(gl.DEPTH_TEST);
+    gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    postShader.setTexture1(textureColorbuffer);
+    renderer.render(player, camera, postShader, [screenQuad]);
+    // render normally
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    // delte fbo when all done:
+    //gl.deleteFramebuffer(fbo);
+
+    // uncomment to render
+    // renderer.render(player, camera, lambert, [terrainClass]);
+
+    // renderer.render(player, camera, instancedShader, treeBases);
+    // renderer.render(player, camera, instancedShader, treeBranches);
+    // renderer.render(player, camera, instancedShader, treeLeaves);
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+
+    // renderer.render(player, camera, flat, [screenQuad]);
+    //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
+
+    // renderer.render(player, camera, lambert, [terrainClass]);
+    // renderer.render(player, camera, instancedShader, treeBases);
+    // renderer.render(player, camera, instancedShader, treeBranches);
+    // renderer.render(player, camera, instancedShader, treeLeaves);
+
+    //if (isTransitioning) {
+    //  renderer.renderPixelated();
+    //} else {
+    // renderer.renderNormal();
+    //}
 
     // set clear color based on player's position
-    let clearColor : vec4 = calculateClearColor(player);
+    let clearColor: vec4 = calculateClearColor(player);
     renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
     stats.end();
 

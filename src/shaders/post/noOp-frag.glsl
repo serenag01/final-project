@@ -1,4 +1,6 @@
-#version 150
+#version 300 es
+precision highp float;
+
 // From ADAM MALLY, CIS 460/560 HW 4 Base Code
 // noOp.frag.glsl:
 // A fragment shader used for post-processing that simply reads the

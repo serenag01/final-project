@@ -1,12 +1,15 @@
-import {mat4, vec4, mat3, vec3} from 'gl-matrix';
+import {mat4, vec4, mat3, vec3, vec2} from 'gl-matrix';
 import Drawable from './Drawable';
 import Camera from '../../Camera';
 import {gl} from '../../globals';
 import ShaderProgram from './ShaderProgram';
+import { Shader } from './ShaderProgram';
 import Player from '../../player/Player';
 
 // In this file, `gl` is accessible because it is imported above
 class OpenGLRenderer {
+
+
   constructor(public canvas: HTMLCanvasElement) {
   }
 
@@ -48,6 +51,7 @@ class OpenGLRenderer {
       prog.draw(drawable);
     }
   }
+
 };
 
 export default OpenGLRenderer;

@@ -22,6 +22,7 @@ in vec4 fs_Col;
 
 out vec4 out_Col; // This is the final output color that you will see on your
                   // screen for the pixel that is currently being processed.
+                  out fs_UV;
 
 void main()
 {
@@ -45,6 +46,8 @@ void main()
         lightIntensity = clamp(lightIntensity, 0.50, 1.2);
         // Compute final shaded color
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
+            fs_UV = vec2(0.0, 0.0);
+
 
         // if (ratio < .2) {
            // out_Col = diffuseColor;
