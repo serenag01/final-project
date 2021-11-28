@@ -258,18 +258,22 @@ function main() {
 
   // This function will be called every frame
   function tick() {
+    const texWidth = window.innerWidth;
+    const texHeight = window.innerHeight;
     let deltaTime: number = 0.01;
     player.update(deltaTime);
     stats.begin();
 
     instancedShader.setTime(time);
     //flat.setTime(time++);
-    gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+    gl.viewport(0, 0, texWidth, texHeight);
     renderer.clear();
+    // set clear color based on player's position
+    let clearColor: vec4 = calculateClearColor(player);
+    renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
 
-    const texWidth = window.innerWidth;
-    const texHeight = window.innerHeight;
-
+    
+    if (isTransitioning) {
     // post-processing, adapted from: https://learnopengl.com/Advanced-OpenGL/Framebuffers
     let framebuffer = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
@@ -350,33 +354,14 @@ function main() {
 
     // delte fbo when all done:
     //gl.deleteFramebuffer(fbo);
+    } else {
+      // render without post-processing effects
+    renderer.render(player, camera, lambert, [terrainClass]);
+    renderer.render(player, camera, instancedShader, treeBases);
+    renderer.render(player, camera, instancedShader, treeBranches);
+    renderer.render(player, camera, instancedShader, treeLeaves);
+    }
 
-    // uncomment to render
-    // renderer.render(player, camera, lambert, [terrainClass]);
-
-    // renderer.render(player, camera, instancedShader, treeBases);
-    // renderer.render(player, camera, instancedShader, treeBranches);
-    // renderer.render(player, camera, instancedShader, treeLeaves);
-
-    //------------------------------------------------------------------------------------------------------------------------------------
-
-    // renderer.render(player, camera, flat, [screenQuad]);
-    //renderer.render(camera, instancedShader, [coral.branch, coral.leaf, base]);
-
-    // renderer.render(player, camera, lambert, [terrainClass]);
-    // renderer.render(player, camera, instancedShader, treeBases);
-    // renderer.render(player, camera, instancedShader, treeBranches);
-    // renderer.render(player, camera, instancedShader, treeLeaves);
-
-    //if (isTransitioning) {
-    //  renderer.renderPixelated();
-    //} else {
-    // renderer.renderNormal();
-    //}
-
-    // set clear color based on player's position
-    let clearColor: vec4 = calculateClearColor(player);
-    renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
     stats.end();
 
     // Tell the browser to call `tick` again whenever it renders a new frame
