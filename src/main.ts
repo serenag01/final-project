@@ -256,6 +256,12 @@ function main() {
     return vec4.len(vec4.subtract(vec4.create(), a, b)) < 0.1;
   }
 
+  function checkTransition() {
+    if (vec3.length(player.distanceFromStart) > 990) {
+      isTransitioning = true;
+    }
+  }
+
   // This function will be called every frame
   function tick() {
     const texWidth = window.innerWidth;
@@ -272,94 +278,103 @@ function main() {
     let clearColor: vec4 = calculateClearColor(player);
     renderer.setClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
 
-    
+    // check if we are transitioning
+    checkTransition();
+
     if (isTransitioning) {
-    // post-processing, adapted from: https://learnopengl.com/Advanced-OpenGL/Framebuffers
-    let framebuffer = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      // wait 5 seconds, then set isTransitioning to false
+      // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
+      setTimeout(function () {
+        isTransitioning = false;
+      }, 5000);
 
-    // generate texture
-    let textureColorbuffer = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      gl.RGB,
-      texWidth,
-      texHeight,
-      0,
-      gl.RGB,
-      gl.UNSIGNED_BYTE,
-      null
-    );
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+      // post-processing, adapted from: https://learnopengl.com/Advanced-OpenGL/Framebuffers
+      let framebuffer = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 
-    // attach it to currently bound framebuffer object
-    gl.framebufferTexture2D(
-      gl.FRAMEBUFFER,
-      gl.COLOR_ATTACHMENT0,
-      gl.TEXTURE_2D,
-      textureColorbuffer,
-      0
-    );
+      // generate texture
+      let textureColorbuffer = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGB,
+        texWidth,
+        texHeight,
+        0,
+        gl.RGB,
+        gl.UNSIGNED_BYTE,
+        null
+      );
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.bindTexture(gl.TEXTURE_2D, null);
 
-    let rbo = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
-    gl.renderbufferStorage(
-      gl.RENDERBUFFER,
-      gl.DEPTH24_STENCIL8,
-      texWidth,
-      texHeight
-    );
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+      // attach it to currently bound framebuffer object
+      gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D,
+        textureColorbuffer,
+        0
+      );
 
-    gl.framebufferRenderbuffer(
-      gl.FRAMEBUFFER,
-      gl.DEPTH_STENCIL_ATTACHMENT,
-      gl.RENDERBUFFER,
-      rbo
-    );
-    var FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-    if (FBOstatus != gl.FRAMEBUFFER_COMPLETE)
-      console.log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      let rbo = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+      gl.renderbufferStorage(
+        gl.RENDERBUFFER,
+        gl.DEPTH24_STENCIL8,
+        texWidth,
+        texHeight
+      );
+      gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
-    //1. Render the scene as usual with the new framebuffer bound as the active framebuffer.
-    // first pass
-    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-    gl.clearColor(0.1, 0.1, 0.1, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
-    gl.enable(gl.DEPTH_TEST);
-    renderer.render(player, camera, lambert, [terrainClass]);
-    renderer.render(player, camera, instancedShader, treeBases);
-    renderer.render(player, camera, instancedShader, treeBranches);
-    renderer.render(player, camera, instancedShader, treeLeaves);
-    // nothing should appear bc we are rendering to the buffer
+      gl.framebufferRenderbuffer(
+        gl.FRAMEBUFFER,
+        gl.DEPTH_STENCIL_ATTACHMENT,
+        gl.RENDERBUFFER,
+        rbo
+      );
+      var FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+      if (FBOstatus != gl.FRAMEBUFFER_COMPLETE)
+        console.log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    //2. Bind to the default framebuffer.
-    // second pass
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null); // back to default
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    //3. Draw a quad that spans the entire screen with the new framebuffer's color buffer as its texture.
-    gl.disable(gl.DEPTH_TEST);
-    gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    postShader.setTexture1(textureColorbuffer);
-    renderer.render(player, camera, postShader, [screenQuad]);
-    // render normally
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      //1. Render the scene as usual with the new framebuffer bound as the active framebuffer.
+      // first pass
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      gl.clearColor(0.1, 0.1, 0.1, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+      gl.enable(gl.DEPTH_TEST);
+      renderer.render(player, camera, lambert, [terrainClass]);
+      renderer.render(player, camera, instancedShader, treeBases);
+      renderer.render(player, camera, instancedShader, treeBranches);
+      renderer.render(player, camera, instancedShader, treeLeaves);
+      // nothing should appear bc we are rendering to the buffer
 
-    // delte fbo when all done:
-    //gl.deleteFramebuffer(fbo);
+      //2. Bind to the default framebuffer.
+      // second pass
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null); // back to default
+      gl.clearColor(1.0, 1.0, 1.0, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      //3. Draw a quad that spans the entire screen with the new framebuffer's color buffer as its texture.
+      gl.disable(gl.DEPTH_TEST);
+      gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      postShader.setTexture1(textureColorbuffer);
+      renderer.render(player, camera, postShader, [screenQuad]);
+      // render normally
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+      // delete fbo when all done:
+      //gl.deleteFramebuffer(fbo);
     } else {
       // render without post-processing effects
-    renderer.render(player, camera, lambert, [terrainClass]);
-    renderer.render(player, camera, instancedShader, treeBases);
-    renderer.render(player, camera, instancedShader, treeBranches);
-    renderer.render(player, camera, instancedShader, treeLeaves);
+      gl.enable(gl.DEPTH_TEST);
+      renderer.render(player, camera, lambert, [terrainClass]);
+      renderer.render(player, camera, instancedShader, treeBases);
+      renderer.render(player, camera, instancedShader, treeBranches);
+      renderer.render(player, camera, instancedShader, treeLeaves);
     }
 
     stats.end();
