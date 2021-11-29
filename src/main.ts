@@ -286,7 +286,7 @@ function main() {
     // check if we are transitioning
     checkTransition();
 
-    if (/*isTransitioning*/ true) {
+    if (isTransitioning) {
       // wait 5 seconds, then set isTransitioning to false
       // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
       setTimeout(function () {
@@ -374,13 +374,14 @@ function main() {
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       postShader.setTexture1(null); // TODO maybe change this to accept the int ID of the tex slot you want the unif to bind to
       renderer.render(player, camera, postShader, [screenQuad]);
-      // render normally
-      // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      
 
       // delete fbo when all done:
       //gl.deleteFramebuffer(fbo);
     } else {
       // render without post-processing effects
+      // render normally
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.enable(gl.DEPTH_TEST);
       renderer.render(player, camera, lambert, [terrainClass]);
       renderer.render(player, camera, instancedShader, treeBases);
