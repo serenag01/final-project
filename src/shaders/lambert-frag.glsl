@@ -24,6 +24,7 @@ out vec4 out_Col; // This is the final output color that you will see on your
                   // screen for the pixel that is currently being processed.
                 //  out vec2 fs_UV;
 
+
 void main()
 {
     // Material base color (before shading)

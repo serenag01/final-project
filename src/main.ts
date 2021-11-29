@@ -12,6 +12,7 @@ import LSystem from "./l-system/L-System";
 import { readTextFile } from "../src/globals";
 import Player from "./player/Player";
 import Terrain from "./terrain/terrain";
+import FrameBuffer from "./rendering/gl/FrameBuffer";
 
 var palette = {
   color1: [255, 127.0, 80.0, 1.0], // branch
@@ -209,6 +210,12 @@ function main() {
   if (!gl) {
     alert("WebGL 2 not supported!");
   }
+
+  const texWidth = window.innerWidth;
+  const texHeight = window.innerHeight;
+  let frameBuffer: FrameBuffer;
+  frameBuffer = new FrameBuffer(gl, texWidth, texHeight, window.devicePixelRatio);
+  frameBuffer.create();
   // `setGL` is a function imported above which sets the value of `gl` in the `globals.ts` module.
   // Later, we can import `gl` from `globals.ts` to access it
   setGL(gl);
@@ -264,8 +271,6 @@ function main() {
 
   // This function will be called every frame
   function tick() {
-    const texWidth = window.innerWidth;
-    const texHeight = window.innerHeight;
     let deltaTime: number = 0.01;
     player.update(deltaTime);
     stats.begin();
@@ -281,7 +286,7 @@ function main() {
     // check if we are transitioning
     checkTransition();
 
-    if (isTransitioning) {
+    if (/*isTransitioning*/ true) {
       // wait 5 seconds, then set isTransitioning to false
       // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
       setTimeout(function () {
@@ -289,60 +294,63 @@ function main() {
       }, 5000);
 
       // post-processing, adapted from: https://learnopengl.com/Advanced-OpenGL/Framebuffers
-      let framebuffer = gl.createFramebuffer();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 
-      // generate texture
-      let textureColorbuffer = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGB,
-        texWidth,
-        texHeight,
-        0,
-        gl.RGB,
-        gl.UNSIGNED_BYTE,
-        null
-      );
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.bindTexture(gl.TEXTURE_2D, null);
+      // let framebuffer = gl.createFramebuffer();
+      // gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 
-      // attach it to currently bound framebuffer object
-      gl.framebufferTexture2D(
-        gl.FRAMEBUFFER,
-        gl.COLOR_ATTACHMENT0,
-        gl.TEXTURE_2D,
-        textureColorbuffer,
-        0
-      );
+      // // generate texture
+      // let textureColorbuffer = gl.createTexture();
+      // gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+      // gl.texImage2D(
+      //   gl.TEXTURE_2D,
+      //   0,
+      //   gl.RGB,
+      //   texWidth,
+      //   texHeight,
+      //   0,
+      //   gl.RGB,
+      //   gl.UNSIGNED_BYTE,
+      //   null
+      // );
+      // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      // gl.bindTexture(gl.TEXTURE_2D, null);
 
-      let rbo = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
-      gl.renderbufferStorage(
-        gl.RENDERBUFFER,
-        gl.DEPTH24_STENCIL8,
-        texWidth,
-        texHeight
-      );
-      gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+      // // attach it to currently bound framebuffer object
+      // gl.framebufferTexture2D(
+      //   gl.FRAMEBUFFER,
+      //   gl.COLOR_ATTACHMENT0,
+      //   gl.TEXTURE_2D,
+      //   textureColorbuffer,
+      //   0
+      // );
 
-      gl.framebufferRenderbuffer(
-        gl.FRAMEBUFFER,
-        gl.DEPTH_STENCIL_ATTACHMENT,
-        gl.RENDERBUFFER,
-        rbo
-      );
-      var FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-      if (FBOstatus != gl.FRAMEBUFFER_COMPLETE)
-        console.log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      // let rbo = gl.createRenderbuffer();
+      // gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+      // gl.renderbufferStorage(
+      //   gl.RENDERBUFFER,
+      //   gl.DEPTH24_STENCIL8,
+      //   texWidth,
+      //   texHeight
+      // );
+      // gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+      // gl.framebufferRenderbuffer(
+      //   gl.FRAMEBUFFER,
+      //   gl.DEPTH_STENCIL_ATTACHMENT,
+      //   gl.RENDERBUFFER,
+      //   rbo
+      // );
+      // var FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+      // if (FBOstatus != gl.FRAMEBUFFER_COMPLETE)
+      //   console.log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+      // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
       //1. Render the scene as usual with the new framebuffer bound as the active framebuffer.
       // first pass
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      frameBuffer.bindFrameBuffer();
+      gl.viewport(0,0,window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
+      // gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
       gl.clearColor(0.1, 0.1, 0.1, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
       gl.enable(gl.DEPTH_TEST);
@@ -355,16 +363,19 @@ function main() {
       //2. Bind to the default framebuffer.
       // second pass
       gl.bindFramebuffer(gl.FRAMEBUFFER, null); // back to default
-      gl.clearColor(1.0, 1.0, 1.0, 1.0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.viewport(0,0,window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
+      gl.clearColor(0.1, 0.1, 0.1, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+      
       //3. Draw a quad that spans the entire screen with the new framebuffer's color buffer as its texture.
       gl.disable(gl.DEPTH_TEST);
-      gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+      // gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
+      frameBuffer.bindToTextureSlot(1);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      postShader.setTexture1(textureColorbuffer);
+      postShader.setTexture1(null); // TODO maybe change this to accept the int ID of the tex slot you want the unif to bind to
       renderer.render(player, camera, postShader, [screenQuad]);
       // render normally
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
       // delete fbo when all done:
       //gl.deleteFramebuffer(fbo);
@@ -412,6 +423,9 @@ function main() {
       camera.setAspectRatio(window.innerWidth / window.innerHeight);
       camera.updateProjectionMatrix();
       //flat.setDimensions(window.innerWidth, window.innerHeight);
+      frameBuffer.resize(window.innerWidth, window.innerHeight, window.devicePixelRatio);
+      frameBuffer.destroy();
+      frameBuffer.create();
     },
     false
   );
