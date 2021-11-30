@@ -113,10 +113,11 @@ function createTrees() {
 
         let angle = 10 + distanceFromOrigin / 2;
 
-        treeIters = 5 + Math.floor(distanceFromOrigin / 30);
+        //treeIters = 5 + Math.floor(distanceFromOrigin / 30);
+        treeIters = 5;
         // clamp angle and tree iters
-        if (angle > 70) {
-          angle = 90;
+        if (angle > 40) {
+          angle = 40;
         }
 
         if (treeIters > 7) {

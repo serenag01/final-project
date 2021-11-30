@@ -120,7 +120,7 @@ class LSystem {
       // rule2.addOutput("[+FX][-FX][*FX][/FX][&FX][^FX]", 1.0);
       // this.expansionRules.set("X", rule2);
       let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("[BX]///[B]//B", 1.0);
+      rule1.addOutput("FFX[BX]//[B]/B", 1.0);
       this.expansionRules.set("X", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
