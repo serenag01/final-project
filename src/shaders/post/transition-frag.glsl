@@ -9,13 +9,15 @@ uniform float u_Time;
 out vec4 out_Col;
 uniform sampler2D u_RenderedTexture;
 const vec2 pixel = vec2(0.0, 0.0);
+
+float rand(vec2 uv){
+    return fract(sin(u_Time / 100.0 * dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 void main()
 {
-   // if (abs(fs_UV.x * 1.0 - pixel.x) > 0.0 || abs(fs_UV.y * 1.0 - pixel.y) > 0.0) {
-     if (true) {
-        out_Col = vec4(1.0);
-    }
-     out_Col = vec4( texture(u_RenderedTexture, fs_UV).rgb, 1.0);
+     vec4 diffuseColor = vec4( texture(u_RenderedTexture, fs_UV).rgb, 1.0);
     // test to see if this is working
-    out_Col = vec4(1.0, 0.0, 1.0, sin(u_Time / 100.0)) + vec4( texture(u_RenderedTexture, fs_UV).rgb, 1.0 - sin(u_Time / 100.0));
+  vec3 noise = vec3(rand(fs_UV));
+  out_Col = vec4(noise * sin(u_Time / 100.0) + vec3(diffuseColor * (1.0 - (sin(u_Time / 100.0)))), 1.0);
 }

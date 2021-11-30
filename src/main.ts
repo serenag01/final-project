@@ -163,7 +163,7 @@ function loadScene() {
 function calculateClearColor(player: Player) {
   let dist: vec3 = vec3.clone(player.distanceFromStart);
   let clearColor: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
-  let distScale: number = vec3.length(dist) / 1000.0;
+  let distScale: number = vec3.length(dist) / FOREST_RADIUS;
   clearColor = vec3.scaleAndAdd(
     clearColor,
     clearColor,
@@ -277,7 +277,7 @@ function main() {
     // check if we are transitioning
     checkTransition();
 
-    if (isTransitioning) {
+    if (true) {
       // wait 7.5 seconds, then set isTransitioning to false
       // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
       setTimeout(function () {
@@ -295,7 +295,7 @@ function main() {
         window.innerWidth * window.devicePixelRatio,
         window.innerHeight * window.devicePixelRatio
       );
-      gl.clearColor(0.1, 0.1, 0.1, 1.0);
+      gl.clearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
       gl.enable(gl.DEPTH_TEST);
       renderer.render(player, camera, lambert, [terrainClass]);
