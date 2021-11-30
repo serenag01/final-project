@@ -55,6 +55,10 @@ Milestone 1:
 
 This week, Serena and Di implemented player state, player movement, random scattering of trees, and distance-based tree generation. The terrain currently contains many trees which are shorter and more "natural-looking" the closer to the origin, and more "rectangular" as it gets further away. As the player moves away, the trees become taller until eventually the player is reset to the beginning of the plane. 
 
+Milestone 2:
+
+This week, Serena and Di implemented better L-systems grammar although now we are struggling with the trees becoming taller and appearing more menacing. Serena implemented a post-processing effect when the player teleports back to the origin.
+
 Begin implementing your engine! Don't worry too much about polish or parameter tuning -- this week is about getting together the bulk of your generator implemented. By the end of the week, even if your visuals are crude, the majority of your generator's functionality should be done.
 
 Put all your code in your forked repository.
