@@ -41,6 +41,7 @@ class ShaderProgram {
   unifUp: WebGLUniformLocation;
   unifDimensions: WebGLUniformLocation;
   unifDistFromStart: WebGLUniformLocation;
+  unifTexture1: WebGLUniformLocation;
 
   constructor(shaders: Array<Shader>) {
     this.prog = gl.createProgram();
@@ -72,6 +73,8 @@ class ShaderProgram {
     this.unifRef = gl.getUniformLocation(this.prog, "u_Ref");
     this.unifUp = gl.getUniformLocation(this.prog, "u_Up");
     this.unifDistFromStart = gl.getUniformLocation(this.prog, "u_DistFromStart");
+    this.unifTexture1     = gl.getUniformLocation(this.prog, "u_Texture1");
+
   }
 
   use() {
@@ -98,6 +101,15 @@ class ShaderProgram {
     this.use();
     if (this.unifDistFromStart !== -1) {
       gl.uniform3f(this.unifDistFromStart, dist[0], dist[1], dist[2]);
+    }
+  }
+
+  setTexture1(textureNum: number) {
+    this.use();
+    if (this.unifTexture1 !== -1) {
+      // gl.activeTexture(gl.TEXTURE1);
+      // gl.bindTexture(gl.TEXTURE_2D, texture)
+      gl.uniform1i(this.unifTexture1, 1);
     }
   }
 
