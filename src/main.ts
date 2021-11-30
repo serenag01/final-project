@@ -276,7 +276,8 @@ function main() {
     stats.begin();
 
     instancedShader.setTime(time);
-    //flat.setTime(time++);
+    postShader.setTime(time++);
+    flat.setTime(time++);
     gl.viewport(0, 0, texWidth, texHeight);
     renderer.clear();
     // set clear color based on player's position
@@ -372,7 +373,7 @@ function main() {
       // gl.bindTexture(gl.TEXTURE_2D, textureColorbuffer);
       frameBuffer.bindToTextureSlot(1);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      postShader.setTexture1(null); // TODO maybe change this to accept the int ID of the tex slot you want the unif to bind to
+      postShader.setTexture1(1); // accepts the int ID of the tex slot you want the unif to bind to
       renderer.render(player, camera, postShader, [screenQuad]);
       
 

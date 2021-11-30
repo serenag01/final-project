@@ -104,7 +104,7 @@ class ShaderProgram {
     }
   }
 
-  setTexture1(texture: WebGLTexture) {
+  setTexture1(textureNum: number) {
     this.use();
     if (this.unifTexture1 !== -1) {
       // gl.activeTexture(gl.TEXTURE1);
