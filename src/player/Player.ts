@@ -6,7 +6,7 @@ const MOUSE_SPEED = 0.005;
 const PI = Math.PI;
 const WORLD_UP = vec3.fromValues(0.0, 1.0, 0.0);
 const TILT_LIMITS = 0.95;
-const FOREST_RADIUS = 3000.0;
+export const FOREST_RADIUS = 3000.0;
 
 class Player {
   camera: Camera;

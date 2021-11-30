@@ -16,7 +16,7 @@ class Terrain extends Drawable {
   constructor() {
     super();
     this.origin = vec3.fromValues(0, 0, 0);
-    this.sideLength = 70;
+    this.sideLength = 160;
     this.squareDims = 20;
   }
 

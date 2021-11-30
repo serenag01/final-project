@@ -13,6 +13,7 @@ precision highp float;
 
 uniform vec4 u_Color; // The color with which to render this instance of geometry.
 uniform vec3 u_DistFromStart;
+uniform float u_ForestRadius;
 
 // These are the interpolated values out of the rasterizer, so you can't know
 // their specific values without knowing the vertices that contributed to them
@@ -29,7 +30,7 @@ void main()
 {
     // Material base color (before shading)
         vec4 inverse  =vec4(1.0) - fs_Col;
-        float ratio = 1.0 - length(u_DistFromStart) / 1000.0; 
+        float ratio = 1.0 - length(u_DistFromStart) / u_ForestRadius; 
         vec4 diffuseColor = vec4(vec3(vec4(1.0) - (inverse * ratio)), 1.0);
 
         // Calculate the diffuse term for Lambert shading
