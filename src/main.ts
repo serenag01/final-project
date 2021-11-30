@@ -278,11 +278,11 @@ function main() {
     checkTransition();
 
     if (isTransitioning) {
-      // wait 5 seconds, then set isTransitioning to false
+      // wait 7.5 seconds, then set isTransitioning to false
       // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
       setTimeout(function () {
         isTransitioning = false;
-      }, 5000);
+      }, 7500);
 
       // post-processing, adapted from: https://learnopengl.com/Advanced-OpenGL/Framebuffers
 
