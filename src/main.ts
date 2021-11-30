@@ -59,6 +59,13 @@ let treeBases: Mesh[] = [];
 let treeBranches: Mesh[] = [];
 let treeLeaves: Mesh[] = [];
 
+const camera = new Camera(
+  vec3.fromValues(30, 10, 30),
+  vec3.fromValues(100, 0, 100)
+);
+
+let player: Player = new Player(camera, camera.position, camera.forward);
+
 function createBase(x: number, z: number) {
   let base = new Mesh(
     readTextFile("resources/base.obj"),
@@ -99,13 +106,14 @@ const controls = {
 // generate trees
 function createTrees() {
   // factors that determine the "natural-ness" of a tree
-  let treeIters = 1;
-  let angle = 10;
+  let treeIters = 2;
+  //let angle = 10;
 
   // generate trees on the terrain
-  for (let i = 0; i < terrainClass.sideLength; i++) {
+  for (let i = 0; i < terrainClass.sideLength; i += 3) {
     //treeIters += 1;
-    for (let j = 0; j < terrainClass.sideLength; j++) {
+
+    for (let j = 0; j < terrainClass.sideLength; j += 3) {
       let rand = Math.random();
 
       if (rand < 0.1) {
@@ -114,11 +122,18 @@ function createTrees() {
 
         let treePos = vec4.fromValues(x, 0.0, z, 1.0);
 
-        angle += 1;
-        //treeIters += Math.floor(i / 10);
+        let px = i - player.startPosition[0];
+        let pz = j - player.startPosition[2];
+        let distanceFromOrigin = Math.sqrt(i * i + j * j);
 
+        //console.log("distnace from playerOrigin");
+        //console.log(distanceFromOrigin);
+        let angle = 10 + distanceFromOrigin / 2;
+
+        //treeIters = 7; //- Math.floor( distanceFromOrigin / 40);
+        treeIters = 5 + Math.floor( distanceFromOrigin / 30);
         // clamp angle and tree iters
-        if (angle > 90) {
+        if (angle > 70) {
           angle = 90;
         }
 
@@ -127,12 +142,21 @@ function createTrees() {
         }
 
         let s = 1;
-        let col1 = vec4.fromValues(255.0, 255.0, 255.0, 255.0);
-        let col2 = vec4.fromValues(255.0, 1.0, 1.0, 1.0);
+
+        let col1 = vec4.fromValues(
+          255, 52, 26,
+          1.0
+        );
+        let col2 = vec4.fromValues(
+          255.0,
+          1.0,
+          1.0,
+          1.0
+        );
         //createBase(x, z);
-
-        let tree = new LSystem(treePos, treeIters, angle, s, col1, col2);
-
+  
+        let tree = new LSystem(treePos, treeIters, angle, s, col1, col2, distanceFromOrigin);
+  
         treeBranches.push(tree.branch);
         treeLeaves.push(tree.leaf);
 
@@ -141,6 +165,7 @@ function createTrees() {
     }
   }
 }
+
 
 function loadScene() {
   // coral = new LSystem(
@@ -222,13 +247,6 @@ function main() {
 
   // Initial call to load scene
   loadScene();
-
-  const camera = new Camera(
-    vec3.fromValues(30, 10, 30),
-    vec3.fromValues(100, 0, 100)
-  );
-
-  let player: Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
   let clearColor: vec4 = calculateClearColor(player);

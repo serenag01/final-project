@@ -39,9 +39,21 @@ Here are the main technical/algorithmic tools we’ll be using:
 Thus far, we have created an engine that the player can move around in using keyboard and mouse controls. We have set constraints that move the player back to spawn if they travel too far, and we also change the color of the sky and terrain as the player moves farther away from spawn.
 
 ### Trouble Makers:
+- instanced rendering trees
+- modifying grammar
+- converting lambertian shader to account for adjustments due to distance
+- keeping player grounded
 
 ### Example Images:
 
+Milestone 1: 
+![image](https://user-images.githubusercontent.com/60444726/142969128-989abb26-0b4b-4f1b-abed-2796b4c42ae8.png)
+
+![image](https://user-images.githubusercontent.com/60444726/142969179-fb43fc6a-bc69-40f8-b196-14db582e72fa.png)
+
+![image](https://user-images.githubusercontent.com/43430369/142970249-ecf053c6-22fd-4db3-805f-343fa6a005f1.png)
+
+This week, Serena and Di implemented player state, player movement, random scattering of trees, and distance-based tree generation. The terrain currently contains many trees which are shorter and more "natural-looking" the closer to the origin, and more "rectangular" as it gets further away. As the player moves away, the trees become taller until eventually the player is reset to the beginning of the plane. 
 
 Begin implementing your engine! Don't worry too much about polish or parameter tuning -- this week is about getting together the bulk of your generator implemented. By the end of the week, even if your visuals are crude, the majority of your generator's functionality should be done.
 

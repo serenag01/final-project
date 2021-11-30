@@ -16,9 +16,11 @@ class LSystem {
   iterations: number = 2;
   defaultAngle = 15;
   scale = 1;
-  color1 = vec4.fromValues(255 / 255, 127.0 / 255.0, 80.0 / 255.0, 1.0);
-  color2 = vec4.fromValues(57 / 255.0, 217 /255.0, 222 / 255.0, 1.0);
+  color1: vec4;
+  color2: vec4;
   position: vec4;
+  marchDistance: number =5;
+  distFromPlayer: number;
 
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
@@ -53,7 +55,7 @@ class LSystem {
   expandGrammar: () => void;
   makeTree: () => void;
 
-  constructor(startPos: vec4, iters: number, angle: number, s: number, col1 : vec4, col2 : vec4) {
+  constructor(startPos: vec4, iters: number, angle: number, s: number, col1 : vec4, col2 : vec4, distFromPlayer: number) {
     this.turtleStack = [];
     this.turtle = new Turtle(
       angle,
@@ -65,9 +67,10 @@ class LSystem {
     this.scale = s;
     this.color1 = col1;
     this.color2 = col2;
+    //this.distFromPlayer = distFromPlayer;
 
     this.branch = new Mesh(
-      readTextFile("resources/cylinder.obj"),
+      readTextFile("resources/cylinder2.obj"),
       vec3.fromValues(startPos[0], startPos[1], startPos[2])
     );
   
@@ -109,13 +112,20 @@ class LSystem {
     };
 
     this.populateExpansionRules = () => {
+      // let rule1: ExpansionRule = new ExpansionRule();
+      // rule1.addOutput("FF", 1.0); // * is the same as \ in houdini here
+      // this.expansionRules.set("F", rule1);
+
+      // let rule2: ExpansionRule = new ExpansionRule();
+      // rule2.addOutput("[+FX][-FX][*FX][/FX][&FX][^FX]", 1.0);
+      // this.expansionRules.set("X", rule2);
       let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("FF#-F^F+[+-F#]", 1.0); // * is the same as \ in houdini here
-      this.expansionRules.set("F", rule1);
+      rule1.addOutput("[BX]///[B]//B", 1.0);
+      this.expansionRules.set("X", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
-      rule2.addOutput("++&[F]", 1.0);
-      this.expansionRules.set("X", rule2);
+      rule2.addOutput("&FFFX", 1.0);
+      this.expansionRules.set("B", rule2);
     };
 
     this.populateDrawingRules = () => {
@@ -154,6 +164,8 @@ class LSystem {
       let forwardRule: DrawingRule = new DrawingRule();
       forwardRule.addOutput(this.drawBranch, 1.0);
       this.drawingRules.set("F", forwardRule);
+      this.drawingRules.set("X", forwardRule);
+      this.drawingRules.set("B", forwardRule);
 
       let leafRule: DrawingRule = new DrawingRule();
       leafRule.addOutput(this.putLeaf, 1.0);
@@ -241,6 +253,8 @@ class LSystem {
       // Draw based on grammar
       let count = 0;
       for (let i = 0; i < this.axioms[this.iterations].length; i++) {
+        // console.log(this.drawingRules);
+        // console.log(this.axioms[this.iterations].charAt(i));
         let func = this.drawingRules
           .get(this.axioms[this.iterations].charAt(i))
           .getOutput();
@@ -286,7 +300,7 @@ class LSystem {
     };
 
     this.makeTree = () => {
-      this.setSeed("FX");
+      this.setSeed("FFFFFX");
       this.axioms = [this.seed];
 
       this.populateExpansionRules();
