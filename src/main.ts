@@ -57,6 +57,14 @@ let treeBases: Mesh[] = [];
 let treeBranches: Mesh[] = [];
 let treeLeaves: Mesh[] = [];
 
+const camera = new Camera(
+  vec3.fromValues(30, 10, 30),
+  vec3.fromValues(100, 0, 100)
+);
+
+let player: Player = new Player(camera, camera.position, camera.forward);
+
+
 
 function createBase(x: number, z: number) {
   let base = new Mesh(
@@ -95,6 +103,15 @@ const controls = {
 
 // NOISE FUNCTIONS:
 
+function calculateClearColor(player : Player) {
+  let dist : vec3 = vec3.clone(player.distanceFromStart);
+  let clearColor : vec3 = vec3.fromValues(0.0, 0.0, 0.0);
+  let distScale :number = vec3.length(dist) / 1000.0;
+  clearColor = vec3.scaleAndAdd(clearColor, clearColor, vec3.fromValues(1.0, 1.0, 1.0), distScale)
+
+  return vec4.fromValues(clearColor[0], clearColor[1], clearColor[2], 1.0);
+}
+
 // generate trees 
 function createTrees() {
   // factors that determine the "natural-ness" of a tree
@@ -102,9 +119,9 @@ function createTrees() {
   //let angle = 10;
 
   // generate trees on the terrain
-  for (let i = 0; i < terrainClass.sideLength; i++) {
+  for (let i = 0; i < terrainClass.sideLength; i += 3) {
     //treeIters += 1;
-    for (let j = 0; j < terrainClass.sideLength; j++) {
+    for (let j = 0; j < terrainClass.sideLength; j += 3) {
 
       let rand = Math.random();
 
@@ -114,15 +131,18 @@ function createTrees() {
   
         let treePos = vec4.fromValues(x, 0.0, z, 1.0);
 
+        let px = i - player.startPosition[0];
+        let pz = j - player.startPosition[2];
         let distanceFromOrigin = Math.sqrt(i * i + j * j);
-        console.log("distnace from origin");
-        console.log(distanceFromOrigin);
-        let angle = 10 + distanceFromOrigin;
 
-        treeIters = Math.floor( distanceFromOrigin / 30);
+        //console.log("distnace from playerOrigin");
+        //console.log(distanceFromOrigin);
+        let angle = 10 + distanceFromOrigin / 2;
 
+        //treeIters = 7; //- Math.floor( distanceFromOrigin / 40);
+        treeIters = 5 + Math.floor( distanceFromOrigin / 30);
         // clamp angle and tree iters
-        if (angle > 90) {
+        if (angle > 70) {
           angle = 90;
         }
 
@@ -132,10 +152,8 @@ function createTrees() {
 
         let s = 1;
         let col1 = vec4.fromValues(
-          255.0,
-          255.0,
-          255.0,
-          255.0
+          255, 52, 26,
+          1.0
         );
         let col2 = vec4.fromValues(
           255.0,
@@ -145,7 +163,7 @@ function createTrees() {
         );
         //createBase(x, z);
   
-        let tree = new LSystem(treePos, treeIters, angle, s, col1, col2);
+        let tree = new LSystem(treePos, treeIters, angle, s, col1, col2, distanceFromOrigin);
   
         treeBranches.push(tree.branch);
         treeLeaves.push(tree.leaf);
@@ -155,6 +173,7 @@ function createTrees() {
     }
   }
 }
+
 
 function loadScene() {
 
@@ -188,16 +207,6 @@ function loadScene() {
 }
 
 
-function calculateClearColor(player : Player) {
-  let dist : vec3 = vec3.clone(player.distanceFromStart);
-  let clearColor : vec3 = vec3.fromValues(0.0, 0.0, 0.0);
-  let distScale :number = vec3.length(dist) / 1000.0;
-  clearColor = vec3.scaleAndAdd(clearColor, clearColor, vec3.fromValues(1.0, 1.0, 1.0), distScale)
-
-  return vec4.fromValues(clearColor[0], clearColor[1], clearColor[2], 1.0);
-}
-
-
 function main() {
   // Initial display for framerate
   const stats = Stats();
@@ -228,13 +237,6 @@ function main() {
 
   // Initial call to load scene
   loadScene();
-
-  const camera = new Camera(
-    vec3.fromValues(30, 10, 30),
-    vec3.fromValues(100, 0, 100)
-  );
-
-  let player: Player = new Player(camera, camera.position, camera.forward);
 
   const renderer = new OpenGLRenderer(canvas);
   let clearColor : vec4 = calculateClearColor(player);

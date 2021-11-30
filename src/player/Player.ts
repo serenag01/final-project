@@ -6,7 +6,7 @@ const MOUSE_SPEED = 0.005;
 const PI = Math.PI;
 const WORLD_UP = vec3.fromValues(0.0, 1.0, 0.0);
 const TILT_LIMITS = 0.95;
-const FOREST_RADIUS = 1000.0;
+const FOREST_RADIUS = 3000.0;
 
 class Player {
   camera: Camera;
@@ -129,7 +129,7 @@ class Player {
     vec3.normalize(direction, direction);
     vec3.copy(direction, vec3.fromValues(direction[0], 0, direction[2]));
 
-    vec3.scaleAndAdd(this.position, this.position, direction, dT * 100.0);
+    vec3.scaleAndAdd(this.position, this.position, direction, dT * 200.0);
 
     // move to start position as needed
     if (vec3.length(this.distanceFromStart) > FOREST_RADIUS) {

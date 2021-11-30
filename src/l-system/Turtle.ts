@@ -9,6 +9,7 @@ class Turtle {
   orientation: mat3 = mat3.create();
   depth: number = 0;
   angle : number = 15;
+  //marchDistance: number = 10;
 
   getForward: () => vec3;
   getRight: () => vec3;
@@ -35,6 +36,7 @@ class Turtle {
     this.depth = 0;
     this.angle = a;
     this.startposition = pos;
+    //this.marchDistance = marchDistance;
 
     this.getForward = () => {
       return vec3.fromValues(
@@ -63,7 +65,7 @@ class Turtle {
       vec3.add(
         this.position,
         this.position,
-        vec3.scale(vec3.create(), this.getForward(), 10.0)
+        vec3.scale(vec3.create(), this.getForward(), 5.0)
       );
     };
 
@@ -85,8 +87,9 @@ class Turtle {
       // multiply value by 10
       offset = offset * 10.0;
 
-      if (this.angle >= 90.0) {
+      if (this.angle >= 80.0) {
         offset = 0;
+        //this.marchDistance = this.marchDistance / 2;
       }
 
       vec3.normalize(axis, axis);
