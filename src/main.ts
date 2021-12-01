@@ -25,6 +25,7 @@ let prevIters = 3;
 let prevAngle = 15;
 let prevScale = 1;
 let prevTransitionType = 1;
+let postON = false;
 let prevColor1: vec4 = vec4.fromValues(
   palette.color1[0],
   palette.color1[1],
@@ -90,6 +91,7 @@ const controls = {
   decoration_scale: 1,
   Generate: loadScene,
   transition_type: 1,
+  post_always_ON: false
 };
 
 // generate trees
@@ -187,6 +189,7 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
   gui.add(controls, "transition_type", { Noise: 1, Blur: 2, Inversion: 3, NightVision: 4 });
+  gui.add(controls, 'post_always_ON');
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -274,7 +277,7 @@ function main() {
     // check if we are transitioning
     checkTransition();
 
-    if (isTransitioning) {
+    if (isTransitioning || postON) {
       // wait 7.5 seconds, then set isTransitioning to false
       // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
       setTimeout(function () {
@@ -332,6 +335,9 @@ function main() {
     if (prevTransitionType != controls.transition_type) {
       prevTransitionType = controls.transition_type;
       postShader.setTransitionType(controls.transition_type);
+    } 
+    if (postON != controls.post_always_ON) {
+      postON = controls.post_always_ON;
     }
 
     stats.end();
