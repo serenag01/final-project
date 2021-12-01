@@ -186,7 +186,7 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  gui.add(controls, "transition_type", { Noise: 1, Blur: 2 });
+  gui.add(controls, "transition_type", { Noise: 1, Blur: 2, Inversion: 3, NightVision: 4 });
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement>document.getElementById("canvas");

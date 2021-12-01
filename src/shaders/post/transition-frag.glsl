@@ -58,6 +58,31 @@ void main() {
   for(int i = 0; i < 9; i++)
     col += sampleTex[i] * kernel[i];
 
+  } else if (u_TransitionType == 3) {
+      vec3 normalColor = texture(u_RenderedTexture, fs_UV).rgb;
+      float sinVal = 0.5 * (sin(u_Time / 100.0) + 1.0);
+      col = vec3(1.0) - normalColor;
+      col = mix(normalColor, col, sinVal);
+  } else if (u_TransitionType == 4) {
+     float kernel[9] = float[](
+        1.0, 1.0, 1.0,
+        1.0,  -8.0, 1.0,
+        1.0, 1.0, 1.0
+    );
+
+    vec3 sampleTex[9];
+  for(int i = 0; i < 9; i++) {
+    sampleTex[i] = vec3(texture(u_RenderedTexture, fs_UV + offsets[i]));
   }
-    out_Col = vec4(col, 1.0);
+  col = vec3(0.0);
+  for(int i = 0; i < 9; i++) {
+    col += sampleTex[i] * kernel[i];
+  }
+  vec3 normalColor = texture(u_RenderedTexture, fs_UV).rgb;
+  float average = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+  col = average * vec3(0.0, 1.0, 0.0);
+  float sinVal = 0.5 * (sin(u_Time / 100.0) + 1.0);
+  col = mix(normalColor, col, sinVal);
+  }
+  out_Col = vec4(col, 1.0);
 }
