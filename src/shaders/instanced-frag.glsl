@@ -11,23 +11,10 @@ out vec4 out_Col;
 
 void main()
 {
-    // for falloff: 
-    // float dist = 1.0 - (length(fs_Pos.xyz) * 2.0);
-    // out_Col = vec4(dist) * fs_Col;
-    // sample y position on a sine curve
 
-    // vec4 inverse = vec4(vec3(vec4(1.0) - fs_Col), 1.0);
-    // float mixVal = sin(fs_Pos.y * 20.0);
-    // float ratio = 1.0 - length(u_DistFromStart) / u_ForestRadius; 
-    // vec4 fullColor = mix(inverse, fs_Col, 1.0 - mixVal);    
-    // vec4 diffuseColor = vec4(vec3(vec4(1.0) - (fullColor * ratio)), 1.0);
-    // out_Col = diffuseColor;
-
-    //vec4 inverse = vec4(vec3(vec4(1.0) - fs_Col), 1.0);
-    //float mixVal = sin(fs_Pos.y * 20.0);
-    //out_Col = fs_Col;//mix(inverse, fs_Col, 1.0 - mixVal);
-
-    vec4 diffuseColor = fs_Col;
+    float ratio = 1.0 - (length(u_DistFromStart) / u_ForestRadius); 
+    vec3 inverse = vec3(1.0) - vec3(fs_Col);
+    vec4 diffuseColor = vec4(vec3(1.0) - vec3(inverse * ratio), 1.0);
 
     // Calculate the diffuse term for Lambert shading
 
@@ -42,6 +29,10 @@ void main()
                                                         //to simulate ambient lighting. This ensures that faces that are not
                                                         //lit by our point light are not completely black.
 
+    // adjust light intensity so ground and sky turn white at the same time
+        lightIntensity *= 2.75 - (ratio);
+        lightIntensity = clamp(lightIntensity, 0.50, 1.2);
+        
     // Compute final shaded color
     out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 

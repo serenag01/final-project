@@ -35,6 +35,8 @@ void main()
 
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
+        vec4 lightVec2 = vec4(vec3(0.0), 1.0);
+        diffuseTerm = mix(diffuseTerm, dot(normalize(fs_Nor), normalize(lightVec2)), .5);
         // Avoid negative lighting values
         diffuseTerm = clamp(diffuseTerm, 0.15, 1.0);
 
