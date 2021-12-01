@@ -274,7 +274,7 @@ function main() {
     // check if we are transitioning
     checkTransition();
 
-    if (true) {
+    if (isTransitioning) {
       // wait 7.5 seconds, then set isTransitioning to false
       // found from: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
       setTimeout(function () {
