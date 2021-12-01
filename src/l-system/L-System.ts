@@ -332,7 +332,7 @@ class LSystem {
       this.putBranch(
         vec3.fromValues(
           6.5 - this.turtle.depth * 0.85,
-          8.0,
+          15.0,
           6.5 - this.turtle.depth * 0.85
         )
       );
