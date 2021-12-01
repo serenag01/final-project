@@ -43,6 +43,7 @@ class ShaderProgram {
   unifDistFromStart: WebGLUniformLocation;
   unifTexture1: WebGLUniformLocation;
   unifForestRadius: WebGLUniformLocation;
+  unifTransitionType: WebGLUniformLocation;
 
   constructor(shaders: Array<Shader>) {
     this.prog = gl.createProgram();
@@ -76,6 +77,7 @@ class ShaderProgram {
     this.unifDistFromStart = gl.getUniformLocation(this.prog, "u_DistFromStart");
     this.unifTexture1     = gl.getUniformLocation(this.prog, "u_Texture1");
     this.unifForestRadius = gl.getUniformLocation(this.prog, "u_ForestRadius");
+    this.unifTransitionType = gl.getUniformLocation(this.prog, "u_TransitionType");
 
   }
 
@@ -117,6 +119,13 @@ class ShaderProgram {
     this.use();
     if (this.unifForestRadius !== -1) {
       gl.uniform1f(this.unifForestRadius, radius);
+    }
+  }
+
+  setTransitionType(transition_type : number) {
+    this.use();
+    if (this.unifTransitionType !== -1) {
+      gl.uniform1i(this.unifTransitionType, transition_type);
     }
   }
 

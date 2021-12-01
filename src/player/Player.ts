@@ -6,7 +6,7 @@ const MOUSE_SPEED = 0.005;
 const PI = Math.PI;
 const WORLD_UP = vec3.fromValues(0.0, 1.0, 0.0);
 const TILT_LIMITS = 0.95;
-export const FOREST_RADIUS = 3000.0;
+export const FOREST_RADIUS = 2000.0;
 
 class Player {
   camera: Camera;
@@ -15,8 +15,8 @@ class Player {
   inputs: Inputs;
   turnAngle: number = 0.0;
   groundedFoward: vec3;
-  distanceFromStart : vec3 = vec3.fromValues(0.0, 0.0, 0.0);
-  startPosition : vec3;
+  distanceFromStart: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
+  startPosition: vec3;
 
   constructor(cam: Camera, pos: vec3, fw: vec3) {
     this.camera = cam;
@@ -132,8 +132,8 @@ class Player {
     vec3.scaleAndAdd(this.position, this.position, direction, dT * 200.0);
 
     // move to start position as needed
-    if (vec3.length(this.distanceFromStart) > FOREST_RADIUS) {
-      vec3.copy(this.position, this.startPosition);
+    if (vec3.length(this.distanceFromStart) > FOREST_RADIUS * 0.95) {
+        vec3.copy(this.position, this.startPosition);
     }
 
     // copy player position to camera
@@ -142,7 +142,12 @@ class Player {
 
   update(dT: number) {
     this.move(dT);
-    this.distanceFromStart = vec3.scaleAndAdd(this.distanceFromStart, this.position, this.startPosition, -1);
+    this.distanceFromStart = vec3.scaleAndAdd(
+      this.distanceFromStart,
+      this.position,
+      this.startPosition,
+      -1
+    );
     this.camera.update();
   }
 }

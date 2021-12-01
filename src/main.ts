@@ -24,6 +24,7 @@ var palette = {
 let prevIters = 3;
 let prevAngle = 15;
 let prevScale = 1;
+let prevTransitionType = 1;
 let prevColor1: vec4 = vec4.fromValues(
   palette.color1[0],
   palette.color1[1],
@@ -88,6 +89,7 @@ const controls = {
   angle: 15,
   decoration_scale: 1,
   Generate: loadScene,
+  transition_type: 1,
 };
 
 // generate trees
@@ -97,7 +99,6 @@ function createTrees() {
 
   // generate trees on the terrain
   for (let i = 0; i < terrainClass.sideLength; i += 3) {
-
     for (let j = 0; j < terrainClass.sideLength; j += 3) {
       let rand = Math.random();
 
@@ -185,12 +186,7 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  gui.add(controls, "iterations", 1, 5).step(1);
-  gui.add(controls, "angle", 1, 20).step(1);
-  gui.add(controls, "decoration_scale", 0, 3).step(0.1);
-  gui.addColor(palette, "color1");
-  gui.addColor(palette, "color2");
-  gui.add(controls, "Generate");
+  gui.add(controls, "transition_type", { Noise: 1, Blur: 2 });
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -264,6 +260,7 @@ function main() {
     instancedShader.setTime(time);
     postShader.setTime(time++);
     postShader.setForestRadius(FOREST_RADIUS);
+    postShader.setTransitionType(prevTransitionType);
     lambert.setForestRadius(FOREST_RADIUS);
     instancedShader.setForestRadius(FOREST_RADIUS);
     flat.setForestRadius(FOREST_RADIUS);
@@ -322,7 +319,6 @@ function main() {
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       postShader.setTexture1(1); // accepts the int ID of the tex slot you want the unif to bind to
       renderer.render(player, camera, postShader, [screenQuad]);
-
     } else {
       // render without post-processing effects
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -331,6 +327,11 @@ function main() {
       renderer.render(player, camera, instancedShader, treeBases);
       renderer.render(player, camera, instancedShader, treeBranches);
       renderer.render(player, camera, instancedShader, treeLeaves);
+    }
+
+    if (prevTransitionType != controls.transition_type) {
+      prevTransitionType = controls.transition_type;
+      postShader.setTransitionType(controls.transition_type);
     }
 
     stats.end();
