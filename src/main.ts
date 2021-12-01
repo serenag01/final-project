@@ -20,12 +20,22 @@ var palette = {
   color2: [57, 217, 222, 1.0], // leaf
 };
 
+function addMusic() {
+  var x = document.createElement("audio");
+  x.setAttribute('id', 'coraline_theme');
+  x.setAttribute("src", "../../resources/coraline_scary_theme_tune.mp3");
+  x.setAttribute("autoplay", "");
+  x.setAttribute('loop', 'true');
+  document.body.appendChild(x);
+}
+
 // controls:
 let prevIters = 3;
 let prevAngle = 15;
 let prevScale = 1;
 let prevTransitionType = 1;
 let postON = false;
+let musicON = false;
 let prevColor1: vec4 = vec4.fromValues(
   palette.color1[0],
   palette.color1[1],
@@ -91,7 +101,8 @@ const controls = {
   decoration_scale: 1,
   Generate: loadScene,
   transition_type: 1,
-  post_always_ON: false
+  post_always_ON: false,
+  music_ON: false,
 };
 
 // generate trees
@@ -188,8 +199,14 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  gui.add(controls, "transition_type", { Noise: 1, Blur: 2, Inversion: 3, NightVision: 4 });
-  gui.add(controls, 'post_always_ON');
+  gui.add(controls, "transition_type", {
+    Noise: 1,
+    Blur: 2,
+    Inversion: 3,
+    NightVision: 4,
+  });
+  gui.add(controls, "post_always_ON");
+  gui.add(controls, "music_ON");
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -335,9 +352,17 @@ function main() {
     if (prevTransitionType != controls.transition_type) {
       prevTransitionType = controls.transition_type;
       postShader.setTransitionType(controls.transition_type);
-    } 
+    }
     if (postON != controls.post_always_ON) {
       postON = controls.post_always_ON;
+    }
+    if (musicON != controls.music_ON) {
+      musicON = controls.music_ON;
+      if (musicON) {
+        addMusic();
+      } else {
+        document.body.removeChild(document.getElementById('coraline_theme'));
+      }
     }
 
     stats.end();
