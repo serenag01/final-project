@@ -67,10 +67,10 @@ class LSystem {
     this.scale = s;
     this.color1 = col1;
     this.color2 = col2;
-    //this.distFromPlayer = distFromPlayer;
+    this.distFromPlayer = distFromPlayer;
 
     this.branch = new Mesh(
-      readTextFile("resources/cylinder2.obj"),
+      readTextFile("resources/cylinder3.obj"),
       vec3.fromValues(startPos[0], startPos[1], startPos[2])
     );
   
@@ -119,13 +119,23 @@ class LSystem {
       // let rule2: ExpansionRule = new ExpansionRule();
       // rule2.addOutput("[+FX][-FX][*FX][/FX][&FX][^FX]", 1.0);
       // this.expansionRules.set("X", rule2);
-      let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("FFX[BX]//[B]/B", 1.0);
-      this.expansionRules.set("X", rule1);
-
-      let rule2: ExpansionRule = new ExpansionRule();
-      rule2.addOutput("&FFFX", 1.0);
-      this.expansionRules.set("B", rule2);
+      if (this.distFromPlayer < 70) {
+        let rule1: ExpansionRule = new ExpansionRule();
+        rule1.addOutput("F[B#]//[+BX#]//BX", 1.0);
+        this.expansionRules.set("X", rule1);
+  
+        let rule2: ExpansionRule = new ExpansionRule();
+        rule2.addOutput("&FFX", 1.0);
+        this.expansionRules.set("B", rule2);
+      } else {
+        let rule1: ExpansionRule = new ExpansionRule();
+        rule1.addOutput("F[B]//[+BX]/-BX", 1.0);
+        this.expansionRules.set("X", rule1);
+  
+        let rule2: ExpansionRule = new ExpansionRule();
+        rule2.addOutput("&FFFX", 1.0);
+        this.expansionRules.set("B", rule2);
+      }
     };
 
     this.populateDrawingRules = () => {
@@ -161,6 +171,7 @@ class LSystem {
       rotateNegZRule.addOutput(this.turtle.rotateNegZ, 1.0);
       this.drawingRules.set("^", rotateNegZRule);
 
+
       let forwardRule: DrawingRule = new DrawingRule();
       forwardRule.addOutput(this.drawBranch, 1.0);
       this.drawingRules.set("F", forwardRule);
@@ -174,6 +185,11 @@ class LSystem {
 
     this.putBranch = (scale: vec3) => {
       // Calculate transformation
+
+      if (this.distFromPlayer > 130) {
+        this.turtle.angle = 90;
+      }
+
       let transform: mat4 = mat4.create();
       let q: quat = quat.create();
       quat.fromMat3(q, this.turtle.orientation);
@@ -203,7 +219,7 @@ class LSystem {
       // Calculate transformation
       let transform: mat4 = mat4.create();
       let q: quat = quat.create();
-      let s : vec3 = vec3.scale(vec3.create(), vec3.fromValues(6.5, 6.5, 6.5), this.scale);
+      let s : vec3 = vec3.scale(vec3.create(), vec3.fromValues(6.5, 6.5, 6.5), 1.0);
       quat.fromMat3(q, this.turtle.orientation);
       mat4.fromRotationTranslationScale(
         transform,
@@ -300,7 +316,7 @@ class LSystem {
     };
 
     this.makeTree = () => {
-      this.setSeed("FFFFFX");
+      this.setSeed("FFFFFFFFFX");
       this.axioms = [this.seed];
 
       this.populateExpansionRules();
@@ -316,7 +332,7 @@ class LSystem {
       this.putBranch(
         vec3.fromValues(
           6.5 - this.turtle.depth * 0.85,
-          15.0,
+          8.0,
           6.5 - this.turtle.depth * 0.85
         )
       );

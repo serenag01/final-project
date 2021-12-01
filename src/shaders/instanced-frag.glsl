@@ -16,14 +16,14 @@ void main()
     // out_Col = vec4(dist) * fs_Col;
     // sample y position on a sine curve
 
-    vec4 inverse = vec4(vec3(vec4(1.0) - fs_Col), 1.0);
-    float mixVal = sin(fs_Pos.y * 20.0);
-    float ratio = 1.0 - length(u_DistFromStart) / u_ForestRadius; 
-    vec4 fullColor = mix(inverse, fs_Col, 1.0 - mixVal);    
-    vec4 diffuseColor = vec4(vec3(vec4(1.0) - (fullColor * ratio)), 1.0);
-    out_Col = diffuseColor;
+    // vec4 inverse = vec4(vec3(vec4(1.0) - fs_Col), 1.0);
+    // float mixVal = sin(fs_Pos.y * 20.0);
+    // float ratio = 1.0 - length(u_DistFromStart) / u_ForestRadius; 
+    // vec4 fullColor = mix(inverse, fs_Col, 1.0 - mixVal);    
+    // vec4 diffuseColor = vec4(vec3(vec4(1.0) - (fullColor * ratio)), 1.0);
+    // out_Col = diffuseColor;
 
-    /*//vec4 inverse = vec4(vec3(vec4(1.0) - fs_Col), 1.0);
+    //vec4 inverse = vec4(vec3(vec4(1.0) - fs_Col), 1.0);
     //float mixVal = sin(fs_Pos.y * 20.0);
     //out_Col = fs_Col;//mix(inverse, fs_Col, 1.0 - mixVal);
 
@@ -43,6 +43,6 @@ void main()
                                                         //lit by our point light are not completely black.
 
     // Compute final shaded color
-    out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);*/
+    out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 
 }

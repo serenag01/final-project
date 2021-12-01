@@ -48,6 +48,9 @@ let treeBases: Mesh[] = [];
 let treeBranches: Mesh[] = [];
 let treeLeaves: Mesh[] = [];
 
+let digitalTreeBranches: Mesh[] = [];
+let digitalTreeLeaves: Mesh[] = [];
+
 const camera = new Camera(
   vec3.fromValues(30, 10, 30),
   vec3.fromValues(100, 0, 100)
@@ -105,7 +108,7 @@ function createTrees() {
         let x = i * terrainClass.squareDims;
         let z = j * terrainClass.squareDims;
 
-        let treePos = vec4.fromValues(x, 0.0, z, 1.0);
+        let treePos = vec4.fromValues(x, -10.0, z, 1.0);
 
         let px = i - player.startPosition[0];
         let pz = j - player.startPosition[2];
@@ -126,8 +129,8 @@ function createTrees() {
 
         let s = 1;
 
-        let col1 = vec4.fromValues(255, 52, 26, 1.0);
-        let col2 = vec4.fromValues(255.0, 1.0, 1.0, 1.0);
+        let col1 = vec4.fromValues(64, 46, 18, 1.0);
+        let col2 = vec4.fromValues(60, 84, 32, 1.0);
 
         let tree = new LSystem(
           treePos,

@@ -73,7 +73,7 @@ class Turtle {
       vec3.add(
         this.position,
         this.position,
-        vec3.scale(vec3.create(), this.getForward(), 5.0)
+        vec3.scale(vec3.create(), this.getForward(), 2.0)
       );
     };
 
