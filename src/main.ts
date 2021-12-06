@@ -208,6 +208,7 @@ function main() {
     Blur: 2,
     Inversion: 3,
     NightVision: 4,
+    Pixels: 5
   });
   gui.add(controls, "post_always_ON");
   gui.add(controls, "music_ON");
